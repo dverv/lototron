@@ -237,7 +237,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
     w = THREE.MathUtils.clamp(w + dy * .03, -9, 9);
-    yawTarget = THREE.MathUtils.clamp(yawTarget + dx * .004, -.7, .9);
+    yawTarget = THREE.MathUtils.clamp(yawTarget - dx * .004, -.7, .9); // барабан поворачивается вслед за пальцем
   });
   const endDrag = () => drag = null;
   canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
