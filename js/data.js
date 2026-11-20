@@ -84,3 +84,9 @@ export function readUpdated(rows) {
   }
   return null;
 }
+
+// В результатах поиска: «Смирнова А. С.» — себя узнать можно, чужие имена не раскрываются.
+export function pickerName(p) {
+  const [last, ...rest] = p.fio.split(' ');
+  return [last, ...rest.map(w => w[0] + '.')].join(' ');
+}

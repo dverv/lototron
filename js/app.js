@@ -1,7 +1,7 @@
 // Лототрон: связывает данные таблицы, 3D-барабан, экраны и память телефона.
 import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/+esm';
 import { CSV_URL } from '../config.js';
-import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, COUPON_RUB } from './data.js';
+import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, pickerName, COUPON_RUB } from './data.js';
 import { chanceGain } from './chance.js';
 import { createDrum } from './drum.js';
 import { load, save, remove } from './store.js';
@@ -177,7 +177,7 @@ function openPicker() {
 }
 $('q').addEventListener('input', () => {
   const q = $('q').value, found = searchByLastName(people, q).slice(0, 8);
-  $('found').innerHTML = found.map(p => `<li><button data-id="${p.id}"><b>${esc(p.fio)}</b><small>${esc([p.city, p.brand].filter(Boolean).join(' · '))}</small></button></li>`).join('');
+  $('found').innerHTML = found.map(p => `<li><button data-id="${p.id}"><b>${esc(pickerName(p))}</b><small>${esc([p.city, p.brand].filter(Boolean).join(' · '))}</small></button></li>`).join('');
   $('pickNote').textContent = q.trim().length < 3 ? 'Нужно хотя бы 3 буквы.'
     : found.length ? 'Нажми на себя.' : 'Не нашли. Проверь написание или напиши организатору конкурса.';
 });
