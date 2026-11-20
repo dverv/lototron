@@ -293,6 +293,8 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
   let acc = 0, last = performance.now(), running = true;
   function loop(now) {
     if (!running) return;
+    requestAnimationFrame(loop);
+    if (!world) return;                       // ещё не показали ни одного барабана
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     acc += dt; let n = 0;
     const h = STEP();
@@ -305,7 +307,6 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     camera.lookAt(0, lookY, 0);
     if (ghostMat) ghostMat.opacity = .72 + .18 * Math.sin(now / 450);
     renderer.render(scene, camera);
-    requestAnimationFrame(loop);
   }
   function pause() { running = false; }
   function resume() { if (!running) { running = true; last = performance.now(); requestAnimationFrame(loop); } }

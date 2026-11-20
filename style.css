@@ -1,0 +1,141 @@
+/* Лототрон — ёлочная тема (прототип v4) */
+:root{
+  --ink:#1b2a4a; --muted:#56688a; --red:#ef2b3c; --green:#14a352; --yellow:#ffcd1f; --blue:#1d5fd6;
+  --sky:#1a56cf; --card:#fff; --soft:#eaf1fb;
+  --f-display: Lobster, "Comic Sans MS", cursive;
+  --f-num: Rubik, "Arial Black", system-ui, sans-serif;
+  --f-body: Nunito, system-ui, -apple-system, sans-serif;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden}
+html{background:var(--sky)}
+body{
+  background:
+    radial-gradient(42% 30% at 50% 52%, rgba(255,236,150,.6), transparent 72%),
+    linear-gradient(180deg, #1a56cf 0%, #2f86f5 38%, #7cc4ff 68%, #d6efff 100%);
+  font-family:var(--f-body);color:#fff;-webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+#snow,#c{position:fixed;inset:0;width:100%;height:100%}
+#c{touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+.drift{position:fixed;left:0;right:0;bottom:0;height:30vh;pointer-events:none;
+  background:
+    radial-gradient(55% 70% at 12% 100%, #fff 98%, transparent 100%),
+    radial-gradient(50% 60% at 85% 100%, #f2f9ff 98%, transparent 100%),
+    radial-gradient(70% 45% at 50% 100%, #fff 98%, transparent 100%)}
+.garland{position:fixed;top:env(safe-area-inset-top,0px);left:0;width:100%;height:52px;pointer-events:none;z-index:2}
+.garland .b{animation:blink 1.6s ease-in-out infinite}
+.garland .b:nth-child(odd){animation-delay:.8s}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* шапка */
+.top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(46px + env(safe-area-inset-top,0px)) var(--gutter-r) 0 var(--gutter-l);
+  display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.eyebrow{font-weight:800;font-size:12px;background:rgba(255,255,255,.2);padding:5px 12px;border-radius:99px;text-align:center}
+.eyebrow.demo{background:var(--yellow);color:#7a3b00}
+.eyebrow.stale{background:#fff;color:var(--red)}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(32px,7vw,46px);margin:0;line-height:1.05;text-align:center;
+  text-shadow:0 3px 0 rgba(10,40,120,.35);text-wrap:balance}
+h1 b{color:var(--yellow);font-weight:400}
+.tabs{pointer-events:auto;display:flex;background:rgba(255,255,255,.22);border-radius:99px;padding:4px;gap:4px}
+.tabs button{font-weight:800;font-size:14px;color:#fff;background:none;border:0;padding:9px 16px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:#fff;color:var(--red);box-shadow:0 3px 0 rgba(10,40,120,.2)}
+
+/* карточки внизу */
+.card{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:3;
+  width:min(440px,calc(100% - 32px));background:var(--card);color:var(--ink);border-radius:28px;padding:16px 20px 14px;
+  box-shadow:0 8px 0 rgba(10,50,130,.15),0 24px 50px rgba(10,50,130,.25)}
+.count{display:flex;align-items:center;gap:14px}
+.count-side{min-width:0}
+.num{font-family:var(--f-num);font-weight:900;font-size:68px;line-height:.9;color:var(--red);display:inline-block;font-variant-numeric:tabular-nums}
+.num.small{font-size:50px}
+.num.bump{animation:bump .55s cubic-bezier(.2,1.8,.4,1)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.3) rotate(-5deg)}100%{transform:scale(1)}}
+.lbl{font-family:var(--f-num);font-weight:800;font-size:20px}
+.delta{display:inline-block;margin-top:5px;font-weight:900;font-size:13px;background:var(--green);color:#fff;padding:3px 10px;border-radius:99px}
+.delta.gold{background:var(--yellow);color:#7a3b00}
+.bar{margin:14px 0 8px;height:18px;border-radius:99px;background:var(--soft);overflow:hidden;position:relative;box-shadow:inset 0 2px 0 rgba(0,0,0,.06)}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:99px;width:0;
+  background:repeating-linear-gradient(-45deg,var(--red) 0 10px,#fff 10px 20px);background-size:28px 28px;
+  box-shadow:inset 0 0 0 2px var(--red);animation:stripes 1.2s linear infinite;transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
+@keyframes stripes{to{background-position:28px 0}}
+.row{display:flex;justify-content:space-between;gap:4px 10px;font-weight:800;font-size:14px;flex-wrap:wrap;color:var(--muted)}
+.row b{font-weight:900;color:var(--ink)}
+.chance{color:var(--green);font-weight:900}
+.ach{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ach span{font-size:12px;font-weight:900;padding:4px 9px;border-radius:99px;background:var(--soft);color:#9aa8c2}
+.ach span.got{background:var(--yellow);color:#7a3b00}
+.link{display:block;margin:8px auto 0;background:none;border:0;color:var(--muted);font-weight:700;font-size:12px;text-decoration:underline;cursor:pointer}
+.rate-btn{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;border:0;cursor:pointer;
+  background:var(--soft);color:var(--ink);font-weight:900;font-size:15px;padding:12px 14px;border-radius:16px}
+.rate-btn span:last-child{color:var(--red)}
+
+/* рейтинг — выезжающая панель */
+.sheet{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:6;width:min(480px,100%);max-height:78vh;display:flex;flex-direction:column;
+  background:var(--card);color:var(--ink);border-radius:28px 28px 0 0;box-shadow:0 -20px 60px rgba(10,50,130,.35);
+  padding:16px var(--gutter-r) max(16px,env(safe-area-inset-bottom,0px)) var(--gutter-l);animation:up .3s cubic-bezier(.2,.9,.2,1)}
+@keyframes up{from{transform:translate(-50%,40px);opacity:0}}
+.sheet-head{display:flex;justify-content:space-between;align-items:center}
+.sheet h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;color:var(--red)}
+.close{border:0;background:var(--soft);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chips button{border:0;background:var(--soft);color:var(--muted);font-weight:800;font-size:13px;padding:6px 12px;border-radius:99px;cursor:pointer}
+.chips button.on{background:var(--ink);color:#fff}
+.list{list-style:none;margin:0;padding:0;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+.list li{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--soft)}
+.list .pl{font-family:var(--f-num);font-weight:900;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.list .nm{min-width:0}
+.list .nm b{display:block;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .nm small{color:var(--muted);font-weight:700;font-size:12px}
+.list .cp{font-family:var(--f-num);font-weight:900;font-size:20px;color:var(--red);font-variant-numeric:tabular-nums}
+.list li.me{background:#fff6d1;border-radius:12px}
+.list li:nth-child(-n+3) .pl{color:#c58a00}
+.note{color:var(--muted);font-size:12px;font-weight:700;margin:10px 0 0}
+
+/* призы */
+.prizes{position:fixed;inset:180px 0 0 0;z-index:2;overflow-y:auto;padding:8px var(--gutter-r) max(24px,env(safe-area-inset-bottom,0px)) var(--gutter-l);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14px);mask-image:linear-gradient(180deg,transparent 0,#000 14px)}
+.prizes > *{max-width:520px;margin-left:auto;margin-right:auto}
+.prizes h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:24px auto 10px;text-shadow:0 2px 0 rgba(10,40,120,.3)}
+.countdown{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cd{background:#fff;color:var(--ink);border-radius:22px;padding:14px;display:flex;flex-direction:column;box-shadow:0 6px 0 rgba(10,50,130,.15)}
+.cd b{font-family:var(--f-num);font-weight:900;font-size:44px;color:var(--red);line-height:1;font-variant-numeric:tabular-nums}
+.cd span{font-weight:900}
+.cd small{color:var(--muted);font-weight:700;font-size:12px;margin-top:2px}
+.stages{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.stages li{background:#fff;color:var(--ink);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline}
+.stages .st{font-weight:900;font-size:12px;color:#fff;background:var(--blue);padding:3px 9px;border-radius:99px;grid-row:span 2;align-self:center}
+.stages b{font-family:var(--f-num);font-weight:900;color:var(--red)}
+.stages p{margin:0;font-weight:700;font-size:14px;grid-column:2}
+.stages .top-prize{background:var(--yellow)}
+.stages .top-prize .st{background:var(--red)}
+.rules{background:#fff;color:var(--ink);border-radius:18px;padding:14px 14px 14px 32px;font-weight:700;font-size:14px;line-height:1.45;display:flex;flex-direction:column;gap:8px}
+.prizes .note{color:#fff;opacity:.85}
+
+/* выбор себя */
+.picker{position:fixed;inset:0;z-index:7;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;
+  padding:calc(170px + env(safe-area-inset-top,0px)) var(--gutter-r) 24px var(--gutter-l)}
+.picker-box{width:min(440px,100%);background:#fff;color:var(--ink);border-radius:28px;padding:20px;box-shadow:0 8px 0 rgba(10,50,130,.15),0 24px 50px rgba(10,50,130,.25)}
+.picker h2{font-family:var(--f-display);font-weight:400;font-size:32px;margin:0;color:var(--red)}
+.picker p{margin:4px 0 12px;font-weight:700;color:var(--muted)}
+.picker input{width:100%;font:800 18px var(--f-body);padding:14px 16px;border-radius:16px;border:2px solid var(--soft);background:var(--soft);color:var(--ink)}
+.picker input:focus{outline:none;border-color:var(--blue);background:#fff}
+.found{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.found button{width:100%;text-align:left;border:0;background:var(--soft);color:var(--ink);padding:12px 14px;border-radius:14px;cursor:pointer}
+.found button b{display:block;font-weight:900}
+.found button small{font-weight:700;color:var(--muted)}
+.found button:hover{background:#dde8f8}
+
+.loading{position:fixed;left:50%;top:55%;transform:translate(-50%,-50%);font-weight:900;font-size:16px;z-index:4;text-shadow:0 2px 0 rgba(10,40,120,.3)}
+
+@media (prefers-reduced-motion: reduce){
+  .bar i,.garland .b{animation:none}
+  .num.bump,.sheet{animation:none}
+}
