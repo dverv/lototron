@@ -73,7 +73,7 @@ export function shortName(p) {
 export function searchByLastName(list, query) {
   const q = norm(query);
   if (q.length < 3) return [];
-  return list.filter(p => norm(p.fio).split(' ').some(w => w.startsWith(q)));
+  return list.filter(p => norm(p.last).startsWith(q));   // только фамилия — по имени список людей не перебрать
 }
 
 // Ячейка «Обновлено» рядом с подписью (обычно над шапкой таблицы).
