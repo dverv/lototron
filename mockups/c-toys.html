@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Макет В — Ёлочные игрушки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ui.css">
+<style>
+  /* Без фото: глубокий фирменный зелёный, сверху на нитях — ёлочные шары в цветах кампании,
+     барабан стоит в мягком световом пятне. */
+  body{background:#062519}
+  .bg{position:fixed;inset:0;z-index:0;
+    background:
+      radial-gradient(55% 45% at 64% 58%, rgba(255,236,206,.16), transparent 70%),
+      radial-gradient(90% 70% at 60% 35%, #13684a 0%, #0b4733 45%, #052117 100%)}
+  .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(2,14,9,.55))}
+  #toys{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+  #drum{z-index:2}
+  .pool{position:fixed;z-index:1;pointer-events:none;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(255,240,214,.22), rgba(255,240,214,.06) 60%, transparent)}
+  .shade{position:fixed;z-index:1;pointer-events:none;border-radius:50%;background:radial-gradient(closest-side, rgba(0,0,0,.5), transparent)}
+  .logo{position:fixed;z-index:3;top:calc(18px + env(safe-area-inset-top,0px));left:var(--gl);width:130px;mix-blend-mode:screen;filter:grayscale(1) contrast(4)}
+  .top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(66px + env(safe-area-inset-top,0px)) var(--gr) 0 var(--gl);pointer-events:none}
+  .top .hello{color:#fff;font-size:17px;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+  .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 32px));z-index:3;display:flex;flex-direction:column;gap:10px}
+  .bottom .panel{background:rgba(9,58,41,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1)}
+  @media (min-width:900px){
+    .logo{top:calc(28px + env(safe-area-inset-top,0px));left:5vw;width:170px}
+    .top{padding:calc(96px + env(safe-area-inset-top,0px)) 0 0 5vw}
+    .top .hello{font-size:26px}
+    .bottom{left:5vw;transform:none;bottom:7vh;width:400px}
+    #drum{left:auto;right:0;width:62vw}
+  }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<span class="mock-tag">Макет В · Ёлочные игрушки</span>
+<div class="bg"></div>
+<canvas id="toys" aria-hidden="true"></canvas>
+<div class="pool" id="pool"></div><div class="shade" id="shade"></div>
+<img class="logo" src="assets/logo.jpg" alt="Дятьково Design">
+<canvas id="drum" aria-label="Лототрон с купонами"></canvas>
+<header class="top" id="top"><p class="hello">Здравствуй, Ангелина!</p></header>
+<div class="bottom" id="bottom">
+  <div id="panel"></div>
+  <nav class="nav ghost"><button data-open="prizes">Призы</button><button data-open="mech">Механика</button></nav>
+</div>
+
+<script type="module">
+import { createDrum } from './shared/drum.js';
+import { createStars } from './shared/stars.js';
+import { createBaubles } from './shared/baubles.js';
+import { DEMO, mountPanel } from './shared/ui.js';
+await document.fonts.ready;
+
+// шары: на компьютере — гроздья слева над карточкой и справа над барабаном; на телефоне — по краям, над барабаном
+createBaubles(document.getElementById('toys'), {
+  desktop: [
+    { x: -.95, len: .26, r: 1.35, mat: 'green', z: -1 },
+    { x: -.80, len: .42, r: .95, mat: 'gold', z: 1 },
+    { x: -.66, len: .16, r: .75, mat: 'silver', z: -2 },
+    { x: -.53, len: .30, r: .6, mat: 'burgundy', z: 0 },
+    { x: .34, len: .08, r: .6, mat: 'pearl', z: -3 },
+    { x: .52, len: .14, r: .95, mat: 'burgundy', z: -1 },
+    { x: .80, len: .10, r: 1.15, mat: 'silver', z: 0 },
+    { x: .93, len: .24, r: .95, mat: 'green', z: 1 },
+    { x: .66, len: .05, r: .55, mat: 'gold', z: -2 },
+  ],
+  mobile: [
+    { x: -.92, len: .16, r: 1.2, mat: 'green', z: 0 },
+    { x: -.5, len: .0, r: .6, mat: 'gold', z: -2 },
+    { x: .40, len: .05, r: .6, mat: 'pearl', z: -3 },
+    { x: .66, len: .12, r: 1.0, mat: 'burgundy', z: -1 },
+    { x: .93, len: .22, r: 1.25, mat: 'silver', z: 1 },
+  ],
+});
+
+const drum = await createDrum(document.getElementById('drum'));
+mountPanel(document.getElementById('panel'), {
+  onTab: t => { t === 'me' ? drum.showMine({ name: DEMO.full, count: DEMO.coupons }) : drum.showAll({ name: DEMO.full, mine: DEMO.coupons, others: DEMO.total - DEMO.coupons }); layout(); },
+});
+function layout() {
+  const wide = innerWidth >= 900;
+  const top = wide ? innerHeight * .26 : document.getElementById('top').getBoundingClientRect().bottom + 30;
+  const bottom = wide ? innerHeight - 50 : document.getElementById('bottom').getBoundingClientRect().top - 4;
+  drum.setLayout({ topPx: top, bottomPx: bottom });
+  // световое пятно и тень под барабаном
+  const c = document.getElementById('drum').getBoundingClientRect(), cx = c.left + c.width / 2, h = bottom - top;
+  Object.assign(document.getElementById('pool').style, { left: cx - h * .9 + 'px', top: top - h * .1 + 'px', width: h * 1.8 + 'px', height: h * 1.25 + 'px' });
+  Object.assign(document.getElementById('shade').style, { left: cx - h * .72 + 'px', top: bottom - h * .2 + 'px', width: h * 1.44 + 'px', height: h * .24 + 'px' });
+}
+addEventListener('resize', layout);
+drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
+
+const pn = document.getElementById('panel');
+createStars([
+  { el: pn, ax: 0, ay: 0, dx: 10, dy: 4, size: 50, tilt: .25, desk: { size: 92, dx: 14, dy: 6 } },
+  { el: pn, ax: 1, ay: 0, dx: -6, dy: -18, size: 38, tilt: -.3, desk: { size: 64, dx: 4, dy: -30 } },
+  { el: pn, ax: 1, ay: 1, dx: -14, dy: -70, size: 34, tilt: .1, desk: { size: 76, dx: -6, dy: -88 } },
+], { zIndex: 10 });
+</script>
+</body>
+</html>
