@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Макет А — Обложка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ui.css">
+<style>
+  /* Экран 1 — обложка: женщина на весь экран + счётчик. Экран 2 — лототрон. */
+  body{background:var(--curtain)}
+  .cover{position:fixed;inset:0;overflow:hidden;background:linear-gradient(90deg,#4a0912,#6b1020 60%,#4a0912);transition:transform .7s cubic-bezier(.7,0,.2,1)}
+  .cover.away{transform:translateY(-100%)}
+  .cover .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:92% 18%}
+  .logo{position:absolute;z-index:2;top:calc(18px + env(safe-area-inset-top,0px));left:var(--gl);width:150px;mix-blend-mode:screen}
+  .cover-ui{position:absolute;left:var(--gl);right:var(--gr);bottom:max(20px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;align-items:stretch}
+  .cover-ui .countdown{align-self:center;width:min(380px,100%)}
+  .go{border:0;border-radius:99px;background:var(--orange);color:var(--ink);font-weight:800;font-size:17px;padding:15px;width:min(380px,100%);align-self:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .cover::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(180deg,transparent,rgba(40,4,10,.75));pointer-events:none}
+  .cover-ui{z-index:1}
+  @media (min-width:900px){
+    .cover .photo{width:62%;right:auto;object-position:0% 20%;-webkit-mask-image:linear-gradient(90deg,#000 80%,transparent);mask-image:linear-gradient(90deg,#000 80%,transparent)}
+    .cover::after{display:none}
+    .logo{display:none}
+    .cover-ui{left:auto;right:7vw;top:50%;bottom:auto;transform:translateY(-50%);width:400px}
+  }
+
+  .game{position:fixed;inset:0;background:
+      radial-gradient(60% 45% at 50% 45%, #ffffff, transparent 70%),
+      radial-gradient(120% 90% at 50% 0%, #f4faf6, #e3efe8)}
+  .g-top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(18px + env(safe-area-inset-top,0px)) var(--gr) 0 var(--gl);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--green)}
+  .brand{border:0;background:none;font-weight:800;font-size:14px;letter-spacing:.18em;color:var(--green);padding:4px}
+  .g-bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 32px));z-index:3;display:flex;flex-direction:column;gap:10px}
+  @media (min-width:900px){
+    .g-bottom{left:6vw;transform:none;top:50%;bottom:auto;translate:0 -40%}
+    #drum{left:34vw;width:66vw}
+  }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<span class="mock-tag">Макет А · Обложка</span>
+
+<section class="game" id="game">
+  <canvas id="drum" aria-label="Лототрон с купонами"></canvas>
+  <header class="g-top" id="gtop">
+    <button class="brand" id="back" title="Вернуться на обложку">ДЯТЬКОВО DESIGN</button>
+    <p class="hello">Здравствуй, Ангелина!</p>
+  </header>
+  <div class="g-bottom" id="gbottom">
+    <div id="panel"></div>
+    <nav class="nav"><button data-open="prizes">Призы</button><button data-open="mech">Механика</button></nav>
+  </div>
+</section>
+
+<section class="cover" id="cover">
+  <img class="photo" src="assets/hero-woman.jpg" alt="">
+  <img class="logo" src="assets/logo.jpg" alt="Дятьково Design">
+  <div class="cover-ui">
+    <div id="cd"></div>
+    <button class="go" id="go">Открыть мой лототрон</button>
+  </div>
+</section>
+
+<script type="module">
+import { createDrum } from './shared/drum.js';
+import { createStars } from './shared/stars.js';
+import { DEMO, mountCountdown, mountPanel } from './shared/ui.js';
+await document.fonts.ready;
+
+mountCountdown(document.getElementById('cd'));
+const drum = await createDrum(document.getElementById('drum'));
+const panel = mountPanel(document.getElementById('panel'), {
+  onTab: t => { t === 'me' ? drum.showMine({ name: DEMO.full, count: DEMO.coupons }) : drum.showAll({ name: DEMO.full, mine: DEMO.coupons, others: DEMO.total - DEMO.coupons }); layout(); },
+});
+function layout() {
+  const wide = innerWidth >= 900;
+  const top = document.getElementById('gtop').getBoundingClientRect().bottom + 8;
+  const bottom = wide ? innerHeight - 70 : document.getElementById('gbottom').getBoundingClientRect().top - 6;
+  drum.setLayout({ topPx: top, bottomPx: bottom });
+}
+addEventListener('resize', layout);
+drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
+
+const cover = document.getElementById('cover'), cd = document.getElementById('cd'), pn = document.getElementById('panel');
+document.getElementById('go').onclick = () => { cover.classList.add('away'); setTimeout(() => cover.style.visibility = 'hidden', 700); drum.resume(); };
+document.getElementById('back').onclick = () => { cover.style.visibility = ''; requestAnimationFrame(() => cover.classList.remove('away')); };
+
+// звёзды: три вокруг счётчика на обложке, три вокруг карточки на экране лототрона
+const onCover = el => () => cover.style.visibility === 'hidden' ? null : el;
+const onGame = el => () => cover.style.visibility === 'hidden' ? el : null;
+createStars([
+  { el: onCover(cd), ax: 0, ay: 0, dx: 4, dy: 2, size: 54, tilt: .2 },
+  { el: onCover(cd), ax: 1, ay: 0, dx: -6, dy: -14, size: 40, tilt: -.3 },
+  { el: onCover(cd), ax: 1, ay: 1, dx: -10, dy: -6, size: 46, tilt: .1 },
+  { el: onGame(pn), ax: 1, ay: 0, dx: -8, dy: -4, size: 48, tilt: -.2 },
+  { el: onGame(pn), ax: 0, ay: 0, dx: 6, dy: -10, size: 34, tilt: .3 },
+  { el: onGame(pn), ax: 1, ay: 1, dx: -4, dy: -40, size: 30, tilt: .4 },
+], { zIndex: 10 });
+</script>
+</body>
+</html>

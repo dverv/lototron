@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Лототрон: макеты на выбор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--green:#0c5a3e;--mint:#e7f3ec;--ink:#12352a;--muted:#5b7368;--orange:#f6ae4b}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#f3f9f5,#e3efe8);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;
+    padding-block:32px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  main{max-width:1240px;margin:0 auto}
+  h1{font-weight:800;font-size:clamp(24px,4vw,34px);letter-spacing:.03em;text-transform:uppercase;color:var(--green);margin:0 0 8px}
+  .sub{margin:0 0 8px;font-weight:500;color:var(--muted);max-width:70ch;line-height:1.5}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:28px}
+  .card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 10px 30px rgba(8,40,28,.08);display:flex;flex-direction:column;gap:12px;min-width:0}
+  .card h2{margin:0;font-weight:800;font-size:20px;color:var(--green)}
+  .card p{margin:0;font-weight:500;font-size:14px;line-height:1.5;color:var(--muted)}
+  .phone{align-self:center;width:300px;max-width:100%;aspect-ratio:375/812;border-radius:34px;border:8px solid #10241c;overflow:hidden;background:#000;position:relative}
+  .phone iframe{position:absolute;left:0;top:0;width:375px;height:812px;border:0;transform-origin:0 0}
+  .links{display:flex;gap:8px;flex-wrap:wrap}
+  .links a{flex:1;text-align:center;text-decoration:none;font-weight:700;font-size:14px;padding:11px 12px;border-radius:99px;background:var(--orange);color:var(--ink)}
+  .links a.sec{background:var(--mint);color:var(--green)}
+  .notes{margin-top:32px;background:#fff;border-radius:24px;padding:20px 22px;font-size:14px;line-height:1.6;font-weight:500}
+  .notes h2{margin:0 0 8px;font-size:18px;font-weight:800;color:var(--green)}
+  .notes ul{margin:0;padding-left:20px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Лототрон: макеты на выбор</h1>
+  <p class="sub">По итогам встречи 26 ноября и концепта лендинга. Все три — живые: барабан крутится пальцем, звёзды вращаются и вспыхивают, «Призы» и «Механика» открываются по кнопке. Данные демонстрационные.</p>
+
+  <div class="grid">
+    <section class="card">
+      <h2>А. Обложка</h2>
+      <p>Первый экран — женщина на весь экран и счётчик до розыгрыша. По кнопке «Открыть мой лототрон» уезжает вверх, под ней — светлый экран с белым барабаном.</p>
+      <div class="phone"><iframe src="a-cover.html" title="Макет А на телефоне" loading="lazy"></iframe></div>
+      <div class="links"><a href="a-cover.html" target="_blank">Открыть</a></div>
+    </section>
+    <section class="card">
+      <h2>Б. Сцена</h2>
+      <p>Сразу лототрон. Женщина — фоновая подложка на весь экран, белый барабан стоит перед подарками, снизу затемнение в зелёный под карточку.</p>
+      <div class="phone"><iframe src="b-stage.html" title="Макет Б на телефоне" loading="lazy"></iframe></div>
+      <div class="links"><a href="b-stage.html" target="_blank">Открыть</a></div>
+    </section>
+    <section class="card">
+      <h2>В. Разворот</h2>
+      <p>Компромисс: на компьютере фото со счётчиком слева, лототрон справа на светлом фоне. На телефоне фото — верхняя полоса, ниже барабан и карточка.</p>
+      <div class="phone"><iframe src="c-split.html" title="Макет В на телефоне" loading="lazy"></iframe></div>
+      <div class="links"><a href="c-split.html" target="_blank">Открыть</a></div>
+    </section>
+  </div>
+
+  <section class="notes">
+    <h2>Что учтено со встречи</h2>
+    <ul>
+      <li>Счётчик — до розыгрыша 30 декабря.</li>
+      <li>Три объёмные звезды вращаются и блестят; по нажатию звезда делает оборот.</li>
+      <li>Снежинки, огоньки и шрифт Lobster убраны, везде Montserrat.</li>
+      <li>Лототрон белый и занимает основную часть экрана, прокрутки нет — разделы открываются кнопками.</li>
+      <li>Счётчик дней и счётчик купонов — в одной карточке.</li>
+      <li>Свои купоны зелёные, остальные белые.</li>
+      <li>Рейтинг общий, без фильтров по направлениям.</li>
+      <li>Призы — картинками, как в макете; механика — во всплывающем окне, текст из файла «механика».</li>
+    </ul>
+  </section>
+</main>
+<script>
+  // масштабируем «телефоны» под ширину рамки
+  const fit = () => document.querySelectorAll('.phone').forEach(p => { p.querySelector('iframe').style.transform = `scale(${p.clientWidth / 375})`; });
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>
