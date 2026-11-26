@@ -232,15 +232,18 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
   // ---------- взаимодействие ----------
   // тянешь вверх-вниз — крутишь барабан; влево-вправо — слегка поворачиваешь камеру
   let drag = null, yaw = .45, yawTarget = .45;
-  canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); onTouch(); });
+  canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; try { canvas.setPointerCapture(e.pointerId); } catch {} onTouch(); });
   canvas.addEventListener('pointermove', e => {
     if (!drag) return;
+    if (e.pointerType === 'mouse' && e.buttons === 0) { drag = null; return; } // кнопку уже отпустили — просто ведём мышью
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
     w = THREE.MathUtils.clamp(w + dy * .03, -9, 9);
     yawTarget = THREE.MathUtils.clamp(yawTarget - dx * .004, -.7, .9); // барабан поворачивается вслед за пальцем
   });
   const endDrag = () => drag = null;
   canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('lostpointercapture', endDrag);
+  addEventListener('pointerup', endDrag); addEventListener('blur', endDrag);   // отпустили за пределами барабана или окна
 
   // ---------- цикл ----------
   const m4 = new THREE.Matrix4(), v3 = new THREE.Vector3(), q4 = new THREE.Quaternion(), one = new THREE.Vector3(1, 1, 1);

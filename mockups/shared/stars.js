@@ -2,6 +2,7 @@
 // Один общий WebGL-холст поверх страницы; каждая звезда привязана к DOM-элементу.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/+esm';
 
 // «Надутая» пятиконечная звезда: от центра к краю профиль как у подушки.
 function puffyStar(R = 1, r = .48, h = .4, rings = 12, per = 8) {
@@ -93,7 +94,13 @@ export function createStars(anchors, { zIndex = 5 } = {}) {
   addEventListener('pointerdown', e => {
     for (const st of stars) {
       const p = st.g.position;
-      if (Math.hypot(e.clientX - p.x, e.clientY + p.y) < st.size) st.spin = 1;
+      if (Math.hypot(e.clientX - p.x, e.clientY + p.y) < st.size * .75) {
+        st.spin = 1; st.flash = 1;
+        // маленький салют из звёздочек прямо из звезды
+        confetti({ particleCount: 36, spread: 80, startVelocity: 20, gravity: .7, ticks: 140, scalar: .8,
+          origin: { x: p.x / innerWidth, y: -p.y / innerHeight }, shapes: ['star', 'circle'],
+          colors: ['#f6ae4b', '#ffffff', '#17a463', '#e9b65a', '#dfe6ee'], zIndex: 40, disableForReducedMotion: true });
+      }
     }
   });
 

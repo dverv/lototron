@@ -12,54 +12,70 @@
   *{box-sizing:border-box}
   body{margin:0;background:linear-gradient(180deg,#f3f9f5,#e3efe8);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;
     padding-block:32px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  main{max-width:1240px;margin:0 auto}
+  main{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
   h1{font-weight:800;font-size:clamp(24px,4vw,34px);letter-spacing:.03em;text-transform:uppercase;color:var(--green);margin:0 0 8px}
-  .sub{margin:0 0 8px;font-weight:500;color:var(--muted);max-width:70ch;line-height:1.5}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:28px}
-  .card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 10px 30px rgba(8,40,28,.08);display:flex;flex-direction:column;gap:12px;min-width:0}
-  .card h2{margin:0;font-weight:800;font-size:20px;color:var(--green)}
-  .card p{margin:0;font-weight:500;font-size:14px;line-height:1.5;color:var(--muted)}
-  .phone{align-self:center;width:300px;max-width:100%;aspect-ratio:375/812;border-radius:34px;border:8px solid #10241c;overflow:hidden;background:#000;position:relative}
-  .phone iframe{position:absolute;left:0;top:0;width:375px;height:812px;border:0;transform-origin:0 0}
+  .sub{margin:0;font-weight:500;color:var(--muted);max-width:75ch;line-height:1.5}
+  .variant{background:#fff;border-radius:28px;padding:22px;box-shadow:0 10px 30px rgba(8,40,28,.08);display:flex;flex-direction:column;gap:16px}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 24px;flex-wrap:wrap}
+  .head > div{min-width:0;max-width:70ch}
+  .variant h2{margin:0 0 4px;font-weight:800;font-size:22px;color:var(--green)}
+  .variant p{margin:0;font-weight:500;font-size:14px;line-height:1.5;color:var(--muted)}
   .links{display:flex;gap:8px;flex-wrap:wrap}
-  .links a{flex:1;text-align:center;text-decoration:none;font-weight:700;font-size:14px;padding:11px 12px;border-radius:99px;background:var(--orange);color:var(--ink)}
+  .links a{text-decoration:none;font-weight:700;font-size:13px;padding:10px 14px;border-radius:99px;background:var(--orange);color:var(--ink);white-space:nowrap}
   .links a.sec{background:var(--mint);color:var(--green)}
-  .notes{margin-top:32px;background:#fff;border-radius:24px;padding:20px 22px;font-size:14px;line-height:1.6;font-weight:500}
+  .pair{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap}
+  .frame{min-width:0;display:flex;flex-direction:column;gap:8px}
+  .frame small{font-weight:700;font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+  .desk{flex:1 1 560px}
+  .screen{position:relative;overflow:hidden;background:#000}
+  .desk .screen{width:100%;aspect-ratio:1440/900;border-radius:14px;border:10px solid #10241c;border-bottom-width:18px}
+  .mob{flex:0 0 auto;width:min(260px,100%)}
+  .mob .screen{width:100%;aspect-ratio:375/812;border-radius:32px;border:8px solid #10241c}
+  .screen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+  .notes{background:#fff;border-radius:24px;padding:20px 22px;font-size:14px;line-height:1.6;font-weight:500}
   .notes h2{margin:0 0 8px;font-size:18px;font-weight:800;color:var(--green)}
   .notes ul{margin:0;padding-left:20px}
 </style>
 </head>
 <body>
 <main>
-  <h1>Лототрон: макеты на выбор</h1>
-  <p class="sub">По итогам встречи 26 ноября и концепта лендинга. Все три — живые: барабан крутится пальцем, звёзды вращаются и вспыхивают, «Призы» и «Механика» открываются по кнопке. Данные демонстрационные.</p>
+  <header>
+    <h1>Лототрон: макеты на выбор</h1>
+    <p class="sub">По итогам встречи 26 ноября и концепта лендинга. Для каждого варианта — версия для компьютера и для телефона. Всё живое: барабан крутится, если потянуть его мышкой или пальцем; звёзды вращаются, а по клику на звезду — салют; «Призы» и «Механика» открываются кнопками. Данные демонстрационные.</p>
+  </header>
 
-  <div class="grid">
-    <section class="card">
-      <h2>А. Обложка</h2>
-      <p>Первый экран — женщина на весь экран и счётчик до розыгрыша. По кнопке «Открыть мой лототрон» уезжает вверх, под ней — светлый экран с белым барабаном.</p>
-      <div class="phone"><iframe src="a-cover.html" title="Макет А на телефоне" loading="lazy"></iframe></div>
-      <div class="links"><a href="a-cover.html" target="_blank">Открыть</a></div>
-    </section>
-    <section class="card">
-      <h2>Б. Сцена</h2>
-      <p>Сразу лототрон. Женщина — фоновая подложка на весь экран, белый барабан стоит перед подарками, снизу затемнение в зелёный под карточку.</p>
-      <div class="phone"><iframe src="b-stage.html" title="Макет Б на телефоне" loading="lazy"></iframe></div>
-      <div class="links"><a href="b-stage.html" target="_blank">Открыть</a></div>
-    </section>
-    <section class="card">
-      <h2>В. Разворот</h2>
-      <p>Компромисс: на компьютере фото со счётчиком слева, лототрон справа на светлом фоне. На телефоне фото — верхняя полоса, ниже барабан и карточка.</p>
-      <div class="phone"><iframe src="c-split.html" title="Макет В на телефоне" loading="lazy"></iframe></div>
-      <div class="links"><a href="c-split.html" target="_blank">Открыть</a></div>
-    </section>
-  </div>
+  <section class="variant">
+    <div class="head"><div><h2>А. Обложка</h2><p>Первый экран — женщина и счётчик до розыгрыша. По кнопке «Открыть мой лототрон» обложка уезжает вверх, под ней — светлый экран с белым барабаном. Вернуться можно по надписи «Дятьково Design».</p></div>
+      <div class="links"><a href="a-cover.html" target="_blank">Открыть на весь экран</a></div></div>
+    <div class="pair">
+      <div class="frame desk"><small>Компьютер</small><div class="screen"><iframe data-w="1440" data-h="900" src="a-cover.html" title="Макет А, компьютер" loading="lazy"></iframe></div></div>
+      <div class="frame mob"><small>Телефон</small><div class="screen"><iframe data-w="375" data-h="812" src="a-cover.html" title="Макет А, телефон" loading="lazy"></iframe></div></div>
+    </div>
+  </section>
+
+  <section class="variant">
+    <div class="head"><div><h2>Б. Сцена</h2><p>Сразу лототрон. Женщина — фоновая подложка на весь экран, белый барабан стоит перед подарками. На компьютере карточка слева, барабан справа, лицо открыто.</p></div>
+      <div class="links"><a href="b-stage.html" target="_blank">Открыть на весь экран</a></div></div>
+    <div class="pair">
+      <div class="frame desk"><small>Компьютер</small><div class="screen"><iframe data-w="1440" data-h="900" src="b-stage.html" title="Макет Б, компьютер" loading="lazy"></iframe></div></div>
+      <div class="frame mob"><small>Телефон</small><div class="screen"><iframe data-w="375" data-h="812" src="b-stage.html" title="Макет Б, телефон" loading="lazy"></iframe></div></div>
+    </div>
+  </section>
+
+  <section class="variant">
+    <div class="head"><div><h2>В. Разворот</h2><p>Компромисс: на компьютере фото со счётчиком слева, лототрон справа на светлом фоне. На телефоне фото — верхняя полоса, ниже барабан и карточка.</p></div>
+      <div class="links"><a href="c-split.html" target="_blank">Открыть на весь экран</a></div></div>
+    <div class="pair">
+      <div class="frame desk"><small>Компьютер</small><div class="screen"><iframe data-w="1440" data-h="900" src="c-split.html" title="Макет В, компьютер" loading="lazy"></iframe></div></div>
+      <div class="frame mob"><small>Телефон</small><div class="screen"><iframe data-w="375" data-h="812" src="c-split.html" title="Макет В, телефон" loading="lazy"></iframe></div></div>
+    </div>
+  </section>
 
   <section class="notes">
     <h2>Что учтено со встречи</h2>
     <ul>
       <li>Счётчик — до розыгрыша 30 декабря.</li>
-      <li>Три объёмные звезды вращаются и блестят; по нажатию звезда делает оборот.</li>
+      <li>Три объёмные звезды вращаются и блестят; по клику — оборот и маленький салют.</li>
       <li>Снежинки, огоньки и шрифт Lobster убраны, везде Montserrat.</li>
       <li>Лототрон белый и занимает основную часть экрана, прокрутки нет — разделы открываются кнопками.</li>
       <li>Счётчик дней и счётчик купонов — в одной карточке.</li>
@@ -70,8 +86,11 @@
   </section>
 </main>
 <script>
-  // масштабируем «телефоны» под ширину рамки
-  const fit = () => document.querySelectorAll('.phone').forEach(p => { p.querySelector('iframe').style.transform = `scale(${p.clientWidth / 375})`; });
+  // каждое окно рисуется в настоящем размере (1440×900 или 375×812) и уменьшается под рамку
+  const fit = () => document.querySelectorAll('.screen iframe').forEach(f => {
+    const w = +f.dataset.w, h = +f.dataset.h, box = f.parentElement.clientWidth;
+    Object.assign(f.style, { width: w + 'px', height: h + 'px', transform: `scale(${box / w})` });
+  });
   addEventListener('resize', fit); fit();
 </script>
 </body>
