@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Макет В — Бархат</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ui.css">
+<style>
+  /* Как «Сцена», но без фото: приглушённый зелёный бархатный занавес и луч прожектора на барабан. */
+  body{background:#0b3a2a}
+  .bg{position:fixed;inset:0;overflow:hidden;
+    background:
+      /* складки занавеса: мягкие вертикальные полосы разной ширины */
+      repeating-linear-gradient(90deg, rgba(0,0,0,.22) 0, rgba(0,0,0,0) 26px, rgba(255,255,255,.05) 40px, rgba(0,0,0,0) 54px, rgba(0,0,0,.22) 82px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0, rgba(0,0,0,0) 70px, rgba(255,255,255,.035) 105px, rgba(0,0,0,0) 140px, rgba(0,0,0,.12) 190px),
+      linear-gradient(180deg,#123f30 0%,#1a4f3c 45%,#0d3426 100%)}
+  /* луч прожектора сверху и светлое пятно «сцены» под барабаном */
+  .bg::before{content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(38% 55% at 62% 12%, rgba(255,246,225,.30), transparent 70%),
+      radial-gradient(45% 16% at 62% 82%, rgba(255,246,225,.22), transparent 70%)}
+  /* затемнение по краям и внизу — как у театральной кулисы */
+  .bg::after{content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(90deg, rgba(4,20,14,.55), transparent 18%, transparent 82%, rgba(4,20,14,.55)),
+      linear-gradient(180deg, rgba(4,20,14,.35), transparent 20%, transparent 65%, rgba(4,20,14,.7))}
+  /* ламбрекен — верхний край занавеса с фестонами */
+  .valance{position:fixed;left:0;right:0;top:0;height:46px;z-index:1;pointer-events:none;
+    background:radial-gradient(60px 34px at 50% 0, #0e3a2b 98%, transparent 100%) 0 0/120px 46px repeat-x;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+  @media (max-width:899px){ .bg::before{background:radial-gradient(70% 45% at 50% 18%, rgba(255,246,225,.28), transparent 70%),radial-gradient(70% 14% at 50% 62%, rgba(255,246,225,.2), transparent 70%)} }
+  .logo{position:fixed;z-index:3;top:calc(56px + env(safe-area-inset-top,0px));left:var(--gl);width:130px;mix-blend-mode:screen;filter:grayscale(1) contrast(4)}
+  .top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(104px + env(safe-area-inset-top,0px)) var(--gr) 0 var(--gl)}
+  .top .hello{color:#fff;font-size:17px;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+  .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 32px));z-index:3;display:flex;flex-direction:column;gap:10px}
+  @media (min-width:900px){
+    .logo{top:calc(64px + env(safe-area-inset-top,0px));left:5vw;width:170px}
+    .top{padding:calc(130px + env(safe-area-inset-top,0px)) 0 0 5vw}
+    .top .hello{font-size:24px}
+    .bottom{left:5vw;transform:none;bottom:7vh;width:400px}
+    #drum{left:auto;right:0;width:62vw}
+  }
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head>
+<body>
+<span class="mock-tag">Макет В · Бархат</span>
+<div class="bg"></div>
+<div class="valance"></div>
+<img class="logo" src="assets/logo.jpg" alt="Дятьково Design">
+<canvas id="drum" aria-label="Лототрон с купонами"></canvas>
+<header class="top" id="top"><p class="hello">Здравствуй, Ангелина!</p></header>
+<div class="bottom" id="bottom">
+  <div id="panel"></div>
+  <nav class="nav ghost"><button data-open="prizes">Призы</button><button data-open="mech">Механика</button></nav>
+</div>
+
+<script type="module">
+import { createDrum } from './shared/drum.js';
+import { createStars } from './shared/stars.js';
+import { DEMO, mountPanel } from './shared/ui.js';
+await document.fonts.ready;
+
+const drum = await createDrum(document.getElementById('drum'));
+mountPanel(document.getElementById('panel'), {
+  onTab: t => { t === 'me' ? drum.showMine({ name: DEMO.full, count: DEMO.coupons }) : drum.showAll({ name: DEMO.full, mine: DEMO.coupons, others: DEMO.total - DEMO.coupons }); layout(); },
+});
+// без фото барабан может быть крупнее и стоять в луче прожектора
+function layout() {
+  const wide = innerWidth >= 900;
+  const top = wide ? innerHeight * .14 : document.getElementById('top').getBoundingClientRect().bottom + 4;
+  const bottom = wide ? innerHeight - 50 : document.getElementById('bottom').getBoundingClientRect().top - 4;
+  drum.setLayout({ topPx: top, bottomPx: bottom });
+}
+addEventListener('resize', layout);
+drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
+
+const pn = document.getElementById('panel'), top = document.getElementById('top');
+createStars([
+  { el: pn, ax: 1, ay: 0, dx: -10, dy: -6, size: 52, tilt: -.2 },
+  { el: pn, ax: 0, ay: 0, dx: 8, dy: -16, size: 36, tilt: .3 },
+  { el: top, ax: .85, ay: 0, dx: 0, dy: 70, size: 44, tilt: .15 },
+], { zIndex: 10 });
+</script>
+</body>
+</html>
