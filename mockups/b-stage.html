@@ -30,6 +30,14 @@
     .bottom{left:5vw;transform:none;top:auto;bottom:6vh;width:400px}
     #drum{left:auto;right:0;width:58vw}
   }
+  /* глубина: тёплый ореол за барабаном, тень на «сцене», мерцающие огоньки */
+  .halo{position:fixed;z-index:0;pointer-events:none;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(255,236,200,.55), rgba(255,220,170,.18) 55%, transparent);filter:blur(6px)}
+  .floor{position:fixed;z-index:0;pointer-events:none;border-radius:50%;background:radial-gradient(closest-side, rgba(0,0,0,.55), transparent)}
+  .tw{position:fixed;z-index:1;pointer-events:none;width:6px;height:6px;border-radius:50%;background:#fff;
+    box-shadow:0 0 10px 3px rgba(255,240,200,.8);animation:tw 3.2s ease-in-out infinite;opacity:0}
+  @keyframes tw{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:.9;transform:scale(1)}}
+  @media (prefers-reduced-motion: reduce){ .tw{animation:none;opacity:.5} }
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head>
@@ -37,6 +45,7 @@
 <span class="mock-tag">Макет Б · Сцена</span>
 <div class="bg"><img src="assets/hero-woman.jpg" alt=""></div>
 <img class="logo" src="assets/logo.jpg" alt="Дятьково Design">
+<div class="halo" id="halo"></div><div class="floor" id="floor"></div>
 <canvas id="drum" aria-label="Лототрон с купонами"></canvas>
 <header class="top" id="top"><p class="hello">Здравствуй, Ангелина!</p></header>
 <div class="bottom" id="bottom">
@@ -57,18 +66,33 @@ mountPanel(document.getElementById('panel'), {
 // барабан — в нижней половине, перед подарками, чтобы лицо оставалось видно
 function layout() {
   const wide = innerWidth >= 900;
-  const top = wide ? innerHeight * .42 : innerHeight * .3;
+  const top = wide ? innerHeight * .32 : innerHeight * .3;
   const bottom = wide ? innerHeight - 60 : document.getElementById('bottom').getBoundingClientRect().top - 4;
   drum.setLayout({ topPx: top, bottomPx: bottom });
+  // ореол и тень следуют за барабаном
+  const c = document.getElementById('drum').getBoundingClientRect(), cx = c.left + c.width / 2, h = bottom - top;
+  Object.assign(document.getElementById('halo').style, { left: cx - h * .95 + 'px', top: top - h * .15 + 'px', width: h * 1.9 + 'px', height: h * 1.2 + 'px' });
+  Object.assign(document.getElementById('floor').style, { left: cx - h * .75 + 'px', top: bottom - h * .2 + 'px', width: h * 1.5 + 'px', height: h * .26 + 'px' });
 }
 addEventListener('resize', layout);
 drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
 
-const pn = document.getElementById('panel');
+// огоньки — по краям, чтобы не мешать лицу и карточке
+for (let i = 0; i < 16; i++) {
+  const t = document.createElement('span'); t.className = 'tw';
+  const side = i % 2 ? 1 : 0, x = side ? 72 + Math.random() * 26 : Math.random() * 26;
+  Object.assign(t.style, { left: x + 'vw', top: 8 + Math.random() * 60 + 'vh', animationDelay: (Math.random() * 3.2).toFixed(2) + 's', scale: (.5 + Math.random()).toFixed(2) });
+  document.body.appendChild(t);
+}
+
+// звёзды как в концепте: внахлёст на углы карточки, крупные на компьютере
+const pn = document.getElementById('panel'), drumEl = document.getElementById('drum');
 createStars([
-  { el: pn, ax: 1, ay: 0, dx: -10, dy: -6, size: 52, tilt: -.2 },
-  { el: pn, ax: 0, ay: 0, dx: 8, dy: -16, size: 36, tilt: .3 },
-  { el: document.getElementById('top'), ax: .12, ay: 1, dx: 0, dy: 40, size: 40, tilt: .15 },
+  { el: pn, ax: 0, ay: 0, dx: 10, dy: 4, size: 50, tilt: .25, desk: { size: 92, dx: 14, dy: 6 } },
+  { el: pn, ax: 1, ay: 0, dx: -6, dy: -18, size: 38, tilt: -.3, desk: { size: 64, dx: 4, dy: -30 } },
+  { el: pn, ax: 1, ay: 1, dx: -14, dy: -70, size: 34, tilt: .1, desk: { size: 76, dx: -6, dy: -88 } },
+  { el: drumEl, ax: .88, ay: .4, size: 30, tilt: -.15, desk: { size: 58, ax: .84, ay: .36 } },
+  { el: drumEl, ax: .09, ay: .48, size: 26, tilt: .4, desk: { size: 44, ax: .16, ay: .46 } },
 ], { zIndex: 10 });
 </script>
 </body>

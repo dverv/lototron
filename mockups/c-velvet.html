@@ -9,29 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared/ui.css">
 <style>
-  /* Как «Сцена», но без фото: приглушённый зелёный бархатный занавес и луч прожектора на барабан. */
+  /* Как «Сцена», но без фото: настоящая 3D-сцена — бархатный занавес, кулисы на золотых подхватах, ламбрекен, прожектор. */
   body{background:#0b3a2a}
-  .bg{position:fixed;inset:0;overflow:hidden;
-    background:
-      /* складки занавеса: мягкие вертикальные полосы разной ширины */
-      repeating-linear-gradient(90deg, rgba(0,0,0,.22) 0, rgba(0,0,0,0) 26px, rgba(255,255,255,.05) 40px, rgba(0,0,0,0) 54px, rgba(0,0,0,.22) 82px),
-      repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0, rgba(0,0,0,0) 70px, rgba(255,255,255,.035) 105px, rgba(0,0,0,0) 140px, rgba(0,0,0,.12) 190px),
-      linear-gradient(180deg,#123f30 0%,#1a4f3c 45%,#0d3426 100%)}
-  /* луч прожектора сверху и светлое пятно «сцены» под барабаном */
-  .bg::before{content:"";position:absolute;inset:0;
-    background:
-      radial-gradient(38% 55% at 62% 12%, rgba(255,246,225,.30), transparent 70%),
-      radial-gradient(45% 16% at 62% 82%, rgba(255,246,225,.22), transparent 70%)}
-  /* затемнение по краям и внизу — как у театральной кулисы */
-  .bg::after{content:"";position:absolute;inset:0;
-    background:
-      linear-gradient(90deg, rgba(4,20,14,.55), transparent 18%, transparent 82%, rgba(4,20,14,.55)),
-      linear-gradient(180deg, rgba(4,20,14,.35), transparent 20%, transparent 65%, rgba(4,20,14,.7))}
-  /* ламбрекен — верхний край занавеса с фестонами */
-  .valance{position:fixed;left:0;right:0;top:0;height:46px;z-index:1;pointer-events:none;
-    background:radial-gradient(60px 34px at 50% 0, #0e3a2b 98%, transparent 100%) 0 0/120px 46px repeat-x;
-    filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
-  @media (max-width:899px){ .bg::before{background:radial-gradient(70% 45% at 50% 18%, rgba(255,246,225,.28), transparent 70%),radial-gradient(70% 14% at 50% 62%, rgba(255,246,225,.2), transparent 70%)} }
+  #stage{position:fixed;inset:0;width:100%;height:100%;z-index:0}
   .logo{position:fixed;z-index:3;top:calc(56px + env(safe-area-inset-top,0px));left:var(--gl);width:130px;mix-blend-mode:screen;filter:grayscale(1) contrast(4)}
   .top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(104px + env(safe-area-inset-top,0px)) var(--gr) 0 var(--gl)}
   .top .hello{color:#fff;font-size:17px;text-shadow:0 2px 12px rgba(0,0,0,.4)}
@@ -48,8 +28,7 @@
 </head>
 <body>
 <span class="mock-tag">Макет В · Бархат</span>
-<div class="bg"></div>
-<div class="valance"></div>
+<canvas id="stage" aria-hidden="true"></canvas>
 <img class="logo" src="assets/logo.jpg" alt="Дятьково Design">
 <canvas id="drum" aria-label="Лототрон с купонами"></canvas>
 <header class="top" id="top"><p class="hello">Здравствуй, Ангелина!</p></header>
@@ -60,10 +39,12 @@
 
 <script type="module">
 import { createDrum } from './shared/drum.js';
+import { createStage } from './shared/stage.js';
 import { createStars } from './shared/stars.js';
 import { DEMO, mountPanel } from './shared/ui.js';
 await document.fonts.ready;
 
+createStage(document.getElementById('stage'));
 const drum = await createDrum(document.getElementById('drum'));
 mountPanel(document.getElementById('panel'), {
   onTab: t => { t === 'me' ? drum.showMine({ name: DEMO.full, count: DEMO.coupons }) : drum.showAll({ name: DEMO.full, mine: DEMO.coupons, others: DEMO.total - DEMO.coupons }); layout(); },
@@ -80,9 +61,10 @@ drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
 
 const pn = document.getElementById('panel'), top = document.getElementById('top');
 createStars([
-  { el: pn, ax: 1, ay: 0, dx: -10, dy: -6, size: 52, tilt: -.2 },
-  { el: pn, ax: 0, ay: 0, dx: 8, dy: -16, size: 36, tilt: .3 },
-  { el: top, ax: .85, ay: 0, dx: 0, dy: 70, size: 44, tilt: .15 },
+  { el: pn, ax: 0, ay: 0, dx: 10, dy: 4, size: 50, tilt: .25, desk: { size: 92, dx: 14, dy: 6 } },
+  { el: pn, ax: 1, ay: 0, dx: -6, dy: -18, size: 38, tilt: -.3, desk: { size: 64, dx: 4, dy: -30 } },
+  { el: pn, ax: 1, ay: 1, dx: -14, dy: -70, size: 34, tilt: .1, desk: { size: 76, dx: -6, dy: -88 } },
+  { el: top, ax: .86, ay: 0, dx: 0, dy: 60, size: 40, tilt: .15, desk: { size: 60, ax: .9, dy: 150 } },
 ], { zIndex: 10 });
 </script>
 </body>

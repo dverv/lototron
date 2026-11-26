@@ -9,12 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared/ui.css">
 <style>
-  /* Экран 1 — обложка: женщина + счётчик. Листаешь вниз — экран доезжает до лототрона и там фиксируется,
-     чтобы перетаскивание барабана не прокручивало страницу. Назад — по надписи «Дятьково Design». */
+  /* Экран 1 — обложка: женщина + счётчик. Листаешь вниз — экран доезжает до лототрона, вверх — обратно на обложку.
+     Барабан крутится только свайпом по нему самому, остальная часть экрана листает страницу. */
   body{background:var(--curtain)}
   .scroller{position:fixed;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:none;scrollbar-width:none}
   .scroller::-webkit-scrollbar{display:none}
-  .scroller.locked{overflow:hidden}
   .scroller > section{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
 
   .cover{background:linear-gradient(90deg,#4a0912,#6b1020 60%,#4a0912)}
@@ -97,14 +96,15 @@ function layout() {
 addEventListener('resize', layout);
 drum.showMine({ name: DEMO.full, count: DEMO.coupons }); layout();
 
-// скролл: доехали до лототрона — фиксируем экран; логотип — назад на обложку
+// скролл между обложкой и лототроном в обе стороны; экраны «защёлкиваются», половинчатых положений нет.
+// Свайп по самому барабану крутит барабан, свайп по шапке и карточке и колёсико мыши — листают страницу.
 const sc = $('scroller'), game = $('game');
-let locked = false;
+let arrived = false;
 sc.addEventListener('scroll', () => {
-  if (!locked && sc.scrollTop >= game.offsetTop - 2) { locked = true; sc.classList.add('locked'); drum.showMine({ name: DEMO.full, count: DEMO.coupons }); }
+  if (!arrived && sc.scrollTop >= game.offsetTop - 2) { arrived = true; drum.showMine({ name: DEMO.full, count: DEMO.coupons }); }
 });
 $('hint').onclick = () => sc.scrollTo({ top: game.offsetTop, behavior: 'smooth' });
-$('back').onclick = () => { locked = false; sc.classList.remove('locked'); sc.scrollTo({ top: 0, behavior: 'smooth' }); };
+$('back').onclick = () => sc.scrollTo({ top: 0, behavior: 'smooth' });
 
 // звёзды: три вокруг счётчика на обложке, три вокруг карточки на экране лототрона — едут вместе со страницей
 const cd = $('cd'), pn = $('panel');

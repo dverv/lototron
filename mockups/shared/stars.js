@@ -58,7 +58,8 @@ function sparkTexture() {
 }
 
 // anchors: [{ el, ax, ay, dx, dy, size, tilt }] — ax/ay доля от рамки элемента (0..1), dx/dy и size в пикселях.
-export function createStars(anchors, { zIndex = 5 } = {}) {
+// sizeScale — множитель размера: на компьютере звёзды крупнее, как в концепте
+export function createStars(anchors, { zIndex = 5, sizeScale = () => innerWidth >= 900 ? 1.5 : 1 } = {}) {
   const canvas = document.createElement('canvas');
   Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: String(zIndex) });
   document.body.appendChild(canvas);
@@ -110,10 +111,12 @@ export function createStars(anchors, { zIndex = 5 } = {}) {
       const visible = r && r.width > 0 && getComputedStyle(el).visibility !== 'hidden';
       st.g.visible = !!visible;
       if (!visible) continue;
-      const x = r.left + (st.ax ?? 0) * r.width + (st.dx ?? 0), y = r.top + (st.ay ?? 0) * r.height + (st.dy ?? 0);
+      const a = st.desk && innerWidth >= 900 ? { ...st, ...st.desk } : st;   // отдельная расстановка для компьютера
+      const x = r.left + (a.ax ?? 0) * r.width + (a.dx ?? 0), y = r.top + (a.ay ?? 0) * r.height + (a.dy ?? 0);
       const bob = Math.sin(t * 1.3 + st.phase) * 3;
       st.g.position.set(x, -(y + bob), 0);
-      st.g.scale.setScalar(st.size / 2);
+      const k = st.desk?.size && innerWidth >= 900 ? st.desk.size : st.size * sizeScale();
+      st.g.scale.setScalar(k / 2);
       // вращение: плавное покачивание + иногда полный оборот
       st.spin = Math.max(0, st.spin - dt * .7);
       st.extra = ((st.extra ?? 0) + st.spin * dt * 14) % (Math.PI * 2);
