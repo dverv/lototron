@@ -1,10 +1,10 @@
 // Лототрон: связывает данные таблицы, 3D-барабан, экраны и память телефона.
 import confetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/+esm';
-import { CSV_URL } from '../config.js?v=202611262053';
-import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, pickerName, COUPON_RUB } from './data.js?v=202611262053';
-import { chanceGain } from './chance.js?v=202611262053';
-import { createDrum } from './drum.js?v=202611262053';
-import { load, save, remove } from './store.js?v=202611262053';
+import { CSV_URL } from '../config.js?v=202611262105';
+import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, pickerName, COUPON_RUB } from './data.js?v=202611262105';
+import { chanceGain } from './chance.js?v=202611262105';
+import { createDrum } from './drum.js?v=202611262105';
+import { load, save, remove } from './store.js?v=202611262105';
 
 const $ = id => document.getElementById(id);
 const fmt = n => Math.round(n).toLocaleString('ru-RU').replace(/ /g, ' ');
