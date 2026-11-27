@@ -1,9 +1,9 @@
 // Конкурс-лотерея: обложка со счётчиком → лототрон участника. Данные — опубликованная Google-таблица.
-import { CSV_URL } from '../config.js?v=202611271708';
-import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, pickerName, COUPON_RUB } from './data.js?v=202611271708';
-import { load, save, remove } from './store.js?v=202611271708';
-import { createDrum } from './drum.js?v=202611271708';
-import { createStars } from './stars.js?v=202611271708';
+import { CSV_URL } from '../config.js?v=202611271826';
+import { parseCSV, buildParticipants, readUpdated, shortName, searchByLastName, pickerName, COUPON_RUB } from './data.js?v=202611271826';
+import { load, save, remove } from './store.js?v=202611271826';
+import { createDrum } from './drum.js?v=202611271826';
+import { createStars } from './stars.js?v=202611271826';
 
 const $ = id => document.getElementById(id);
 const fmt = n => Math.round(n).toLocaleString('ru-RU').replace(/ /g, ' ');
