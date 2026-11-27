@@ -1,7 +1,7 @@
 /* Лототрон — по концепту Ксении (Дятьково Design). Montserrat, фирменный зелёный, оранжевые акценты. */
 :root{
   --green:#0d5a40; --green-hi:#16694c; --green-lo:#0a4a34; --green-deep:#083d2b; --green-bright:#1fa76b;
-  --orange-hi:#ffc57c; --orange:#f4a84d; --ink:#10382a; --muted:#5e756b; --line:#e6ece9;
+  --orange-hi:#ffb25b; --orange:#ffb25b;   /* фирменный жёлтый Дятьково */ --ink:#10382a; --muted:#5e756b; --line:#e6ece9;
   --white:#fff; --curtain:#5e0b16;
   --f: Montserrat, system-ui, -apple-system, "Segoe UI", sans-serif;
   --gl: max(16px, env(safe-area-inset-left, 0px)); --gr: max(16px, env(safe-area-inset-right, 0px));
@@ -79,7 +79,7 @@ button{cursor:pointer}
 .switch{display:inline-flex;gap:2px;padding:4px;border-radius:99px;background:#08452f;
   box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
 .switch button{border:0;background:none;color:#fff;font-weight:500;font-size:14px;padding:6px 14px;border-radius:99px}
-.switch button.on{color:#123a2b;background:linear-gradient(180deg,#f8b965,#f2a447);
+.switch button.on{color:#123a2b;background:#ffb25b;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 /* у вкладок «мой» и «общий» одинаковая высота строк — плашка и лототрон не прыгают при переключении */
 .big{display:flex;align-items:center;gap:16px;margin-top:16px;height:23cqi}
@@ -93,7 +93,7 @@ button{cursor:pointer}
 .big > div{display:flex;flex-direction:column;align-items:stretch}
 /* таблетка — на всю ширину слова «купонов», как в концепте */
 .pill{display:block;text-align:center;margin-top:6px;font-weight:500;font-size:15px;padding:4px 12px;border-radius:99px;color:#123a2b;
-  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.16)}
+  background:#ffb25b;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.16)}
 .pill.green{color:#fff;background:linear-gradient(180deg,#19ad68,#119858);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(0,0,0,.16)}
 .track{margin:0 0 10px;height:26px;padding:3px;border-radius:99px;background:#08452f;
   box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
@@ -103,7 +103,7 @@ button{cursor:pointer}
 .days{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;font-weight:500}
 .days b{font-weight:600;font-size:18px;color:var(--orange-hi);font-variant-numeric:tabular-nums}
 .cta{display:block;width:100%;margin:0;border:0;border-radius:99px;padding:11px;font-weight:500;font-size:18px;color:#123a2b;
-  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
+  background:#ffb25b;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 
 .nav{display:flex;gap:10px}
 .nav button{flex:1;border:0;border-radius:16px;padding:11px 8px;font-weight:600;font-size:15px;color:var(--green);
