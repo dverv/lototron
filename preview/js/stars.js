@@ -1,33 +1,87 @@
-// Объёмные хромированные звёзды, как в концепте: «пухлые», плавно вращаются. Без бликов — по просьбе дизайнера.
+// Объёмные хромированные звёзды, как в концепте: надутые фольгированные шарики, плавно вращаются. Без бликов — по просьбе дизайнера.
 // Один общий WebGL-холст поверх страницы; каждая звезда привязана к DOM-элементу.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-// Звезда как фольгированный шарик из концепта: скруглённые толстые лучи, «надутый» объём.
-// Контур задан плавной функцией радиуса от угла: лучи без острых кончиков, впадины мягкие.
-function puffyStar(R = 1, rIn = .56, h = .62, rings = 28, N = 200) {
+// Звезда как фольгированный шарик из концепта: плоский контур звезды, «надутый» изнутри.
+// Объём считаем как натянутую плёнку под давлением (уравнение Пуассона): поверхность
+// получается гладкой, без рёбер от центра к лучам, тонкие кончики лучей сами выходят ниже.
+export function puffyStar(R = 1, rIn = .52, h = .5, rings = 34, N = 240) {
+  // контур: классическая пятиконечная звезда с прямыми сторонами, углы скруглены сглаживанием
+  const M = 1440, raw = new Float32Array(M), lut = new Float32Array(M);
+  for (let i = 0; i < M; i++) {
+    const a = i / M * Math.PI * 2, seg = Math.PI / 5;
+    const k = Math.floor(((a - Math.PI / 2) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) / seg);
+    const a0 = Math.PI / 2 + k * seg, a1 = a0 + seg;
+    const r0 = k % 2 ? rIn : R, r1 = k % 2 ? R : rIn;
+    const x0 = Math.cos(a0) * r0, y0 = Math.sin(a0) * r0, x1 = Math.cos(a1) * r1, y1 = Math.sin(a1) * r1;
+    const dx = Math.cos(a), dy = Math.sin(a), ex = x1 - x0, ey = y1 - y0;   // пересечение луча со стороной
+    raw[i] = (x0 * ey - y0 * ex) / (dx * ey - dy * ex);
+  }
+  const W = 36, sig = 24;   // гауссово сглаживание радиуса по углу — скругляет кончики и впадины
+  for (let i = 0; i < M; i++) {
+    let sum = 0, wsum = 0;
+    for (let j = -W * 2; j <= W * 2; j++) { const w = Math.exp(-j * j / (2 * sig * sig)); sum += raw[(i + j + M) % M] * w; wsum += w; }
+    lut[i] = sum / wsum;
+  }
+  const rad = a => { const f = ((a % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * M, i = Math.floor(f) % M, t = f - Math.floor(f); return lut[i] * (1 - t) + lut[(i + 1) % M] * t; };
+  // 1) решаем ∇²u = -1 внутри контура на сетке, u = 0 снаружи
+  const G = 200, span = 1.06, step = 2 * span / (G - 1);
+  const u = new Float32Array(G * G), inside = new Uint8Array(G * G);
+  for (let j = 0; j < G; j++) for (let i = 0; i < G; i++) {
+    const x = -span + i * step, y = -span + j * step;
+    inside[j * G + i] = Math.hypot(x, y) < rad(Math.atan2(y, x)) ? 1 : 0;
+  }
+  const h2 = step * step;
+  for (let it = 0; it < 500; it++) {
+    for (let j = 1; j < G - 1; j++) for (let i = 1; i < G - 1; i++) {
+      const q = j * G + i; if (!inside[q]) continue;
+      const v = (u[q - 1] + u[q + 1] + u[q - G] + u[q + G] + h2) / 4;
+      u[q] += 1.9 * (v - u[q]);
+    }
+  }
+  let umax = 0; for (const v of u) umax = Math.max(umax, v);
+  const sample = (x, y) => {
+    const fx = (x + span) / step, fy = (y + span) / step;
+    const i = Math.min(G - 2, Math.max(0, Math.floor(fx))), j = Math.min(G - 2, Math.max(0, Math.floor(fy)));
+    const tx = fx - i, ty = fy - j, q = j * G + i;
+    return (u[q] * (1 - tx) + u[q + 1] * tx) * (1 - ty) + (u[q + G] * (1 - tx) + u[q + G + 1] * tx) * ty;
+  };
+  // 2) сетка: центр + кольца, повторяющие контур; кольца гуще у шва, где плёнка круто уходит вниз
   const outline = [];
   for (let i = 0; i < N; i++) {
-    const a = Math.PI / 2 + i / N * Math.PI * 2;
-    const k = Math.pow((1 + Math.cos(5 * (a - Math.PI / 2))) / 2, 1.35);   // 1 — на луче, 0 — во впадине
-    const r = rIn + (R - rIn) * k;
+    const a = Math.PI / 2 + i / N * Math.PI * 2, r = rad(a);
     outline.push([Math.cos(a) * r, Math.sin(a) * r]);
   }
-  const n = outline.length, pos = [], idx = [];
+  const n = N, P = .5, T0 = .8, pos = [], nor = [], idx = [];
+  // высота на полярной сетке (кольцо k, угол i). У самого шва значения сетки Пуассона «ступенчатые»,
+  // поэтому после T0 плавно сводим высоту к нулю по параболе, сохраняя наклон.
+  const ts = [0]; for (let k = 1; k <= rings; k++) ts.push(Math.sin(k / rings * Math.PI / 2));
+  const U = ts.map(() => new Float32Array(n));
+  for (let i = 0; i < n; i++) {
+    const [x, y] = outline[i];
+    const at = t => Math.max(0, sample(x * t, y * t));
+    const u0 = at(T0), s0 = (at(T0) - at(T0 - .03)) / .03, c = -(u0 + s0 * (1 - T0)) / ((1 - T0) ** 2);
+    ts.forEach((t, k) => { const d = t - T0; U[k][i] = k === 0 ? umax : t <= T0 ? at(t) : Math.max(0, u0 + s0 * d + c * d * d); });
+    U[rings][i] = 0;
+  }
+  const Z = U.map(row => Array.from(row, v => h * Math.pow(Math.min(1, v / umax), P)));
+  const pt = (k, i) => { i = (i + n) % n; const [x, y] = outline[i]; return [x * ts[k], y * ts[k], Z[k][i]]; };
   for (const side of [1, -1]) {
     const base = pos.length / 3;
-    pos.push(0, 0, side * h);
-    for (let k = 1; k <= rings; k++) {
-      const t = Math.sin(k / rings * Math.PI / 2);   // кольца гуще у края, где толщина быстро уходит в ноль
-      for (const [x, y] of outline) {
-        // как у надутого шарика: толщина зависит от расстояния до ближайшего края контура
-        const px = x * t, py = y * t;
-        let d = Infinity;
-        for (let j = 0; j < n; j++) d = Math.min(d, Math.hypot(px - outline[j][0], py - outline[j][1]));
-        if (k === rings) d = 0;   // самый край — шов шарика
-        const dn = Math.min(1, d / rIn);
-        pos.push(px, py, side * h * Math.sqrt(dn * (2 - dn)));
-      }
+    pos.push(0, 0, side * h); nor.push(0, 0, side);
+    for (let k = 1; k <= rings; k++) for (let i = 0; i < n; i++) {
+      const p = pt(k, i);
+      pos.push(p[0], p[1], side * p[2]);
+      // нормаль по соседям на полярной сетке: гладко и в центре, и у шва
+      const a = pt(k, i + 1), b = pt(k, i - 1), c = pt(Math.min(rings, k + 1), i), d = pt(k - 1, i);
+      const tx = a[0] - b[0], ty = a[1] - b[1], tz = a[2] - b[2];
+      const rx = c[0] - d[0], ry = c[1] - d[1], rz = c[2] - d[2];
+      let nx = ty * rz - tz * ry, ny = tz * rx - tx * rz, nz = tx * ry - ty * rx;
+      if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+      if (k === rings) { nz = 0; if (nx * p[0] + ny * p[1] < 0) { nx = -nx; ny = -ny; } }
+      const l = Math.hypot(nx, ny, nz) || 1;
+      nor.push(nx / l, ny / l, side * nz / l);
     }
     for (let i = 0; i < n; i++) {
       const a = base + 1 + i, b = base + 1 + (i + 1) % n;
@@ -43,8 +97,8 @@ function puffyStar(R = 1, rIn = .56, h = .62, rings = 28, N = 200) {
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
   g.setIndex(idx);
-  g.computeVertexNormals();
   return g;
 }
 
