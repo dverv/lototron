@@ -41,8 +41,9 @@ button{cursor:pointer}
 .countdown .till{color:var(--orange-hi);font-weight:500;font-size:18px;margin-top:14px}
 
 /* общий «объём» зелёных плашек: светлее сверху-слева, тонкий светлый кант, мягкая тень */
-.plate{background:linear-gradient(158deg,var(--green-hi) 0%,var(--green) 42%,var(--green-lo) 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.16),0 22px 44px rgba(6,40,27,.28),0 4px 10px rgba(6,40,27,.16)}
+/* как в концепте: почти плоский тёмно-зелёный, тонкий светлый кант по краю, мягкая тень снизу */
+.plate{background:linear-gradient(180deg,#0d5c41,#0a5239);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 1.5px 0 rgba(255,255,255,.14),0 12px 28px rgba(6,40,27,.24),0 3px 8px rgba(6,40,27,.14)}
 
 @media (min-width:900px){
   .cover img.photo{object-position:40% 30%}
@@ -67,27 +68,33 @@ button{cursor:pointer}
 .hello{margin:0;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;color:var(--green)}
 
 /* плашка с купонами */
-.panel{color:#fff;border-radius:22px;padding:22px 22px 20px}
-.switch{display:inline-flex;gap:2px;padding:4px;border-radius:99px;background:var(--green-deep);
-  box-shadow:inset 0 2px 4px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.12)}
+.panel{color:#fff;border-radius:22px;padding:22px 22px 20px;container-type:inline-size}
+.switch{display:inline-flex;gap:2px;padding:4px;border-radius:99px;background:#08452f;
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
 .switch button{border:0;background:none;color:#fff;font-weight:500;font-size:15px;padding:6px 15px;border-radius:99px}
-.switch button.on{color:var(--ink);background:linear-gradient(180deg,var(--orange-hi),var(--orange));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(150,80,10,.25),0 2px 6px rgba(0,0,0,.25)}
+.switch button.on{color:#123a2b;background:linear-gradient(180deg,#f8b965,#f2a447);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 .big{display:flex;align-items:center;gap:16px;margin-top:20px}
-.big .n{font-weight:400;font-size:76px;line-height:.86;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.big .w{font-weight:500;font-size:30px;line-height:1.05}
-.pill{display:inline-block;margin-top:6px;font-weight:500;font-size:15px;padding:4px 13px;border-radius:99px;color:var(--ink);
-  background:linear-gradient(180deg,var(--orange-hi),var(--orange));box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 5px rgba(0,0,0,.2)}
-.pill.green{color:#fff;background:linear-gradient(180deg,#2bbf7d,var(--green-bright));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 5px rgba(0,0,0,.2)}
-.track{margin:20px 0 10px;height:26px;padding:3px;border-radius:99px;background:var(--green-deep);
-  box-shadow:inset 0 2px 4px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.1)}
-.track i{display:block;height:100%;min-width:20px;border-radius:99px;background:linear-gradient(180deg,#2fc584,#14965d);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(0,0,0,.25);transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
+.big .n{font-weight:500;font-size:24cqi;line-height:.86;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.big .w{font-weight:500;font-size:9.5cqi;line-height:1.05}
+.big .n.d3{font-size:22cqi}
+.big .n.d4{font-size:15.5cqi}
+.big .n.d3 + div .w{font-size:9cqi}
+.big .n.d4 + div .w{font-size:8.2cqi}
+.big > div{display:flex;flex-direction:column;align-items:stretch}
+/* таблетка — на всю ширину слова «купонов», как в концепте */
+.pill{display:block;text-align:center;margin-top:6px;font-weight:500;font-size:15px;padding:4px 12px;border-radius:99px;color:#123a2b;
+  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.16)}
+.pill.green{color:#fff;background:linear-gradient(180deg,#19ad68,#119858);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(0,0,0,.16)}
+.track{margin:20px 0 10px;height:26px;padding:3px;border-radius:99px;background:#08452f;
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
+.track i{display:block;height:100%;min-width:20px;border-radius:99px;background:linear-gradient(180deg,#1db06b,#139a5b);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
 .small{font-size:14px;font-weight:500}
 .days{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;font-weight:500}
 .days b{font-weight:600;font-size:18px;color:var(--orange-hi);font-variant-numeric:tabular-nums}
-.cta{display:block;width:100%;margin-top:18px;border:0;border-radius:99px;padding:11px;font-weight:600;font-size:16px;color:var(--ink);
-  background:linear-gradient(180deg,var(--orange-hi),var(--orange));box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 3px 8px rgba(0,0,0,.22)}
+.cta{display:block;width:100%;margin-top:20px;border:0;border-radius:99px;padding:11px;font-weight:500;font-size:18px;color:#123a2b;
+  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 
 .nav{display:flex;gap:10px}
 .nav button{flex:1;border:0;border-radius:16px;padding:13px 8px;font-weight:600;font-size:15px;color:var(--green);
@@ -113,10 +120,9 @@ button{cursor:pointer}
   .side{left:6vw;right:auto;top:50%;bottom:auto;transform:translateY(-50%);width:480px;gap:16px}
   .hello{font-size:28px}
   .panel{padding:34px 38px 30px;border-radius:26px}
-  .big .n{font-size:104px}
-  .big .w{font-size:42px}
-  .pill{font-size:19px;padding:5px 16px}
-  .switch button{font-size:18px;padding:7px 18px}
+  .pill{font-size:21px;padding:5px 16px}
+  .cta{font-size:24px;padding:13px}
+  .switch button{font-size:20px;padding:7px 20px}
   .track{height:30px}
   .small{font-size:16px}
 }

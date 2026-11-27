@@ -10,6 +10,7 @@ const fmt = n => Math.round(n).toLocaleString('ru-RU').replace(/ /g, ' ');
 const plural = (n, a, b, c) => { const x = n % 10, y = n % 100; return x === 1 && y !== 11 ? a : x >= 2 && x <= 4 && (y < 12 || y > 14) ? b : c; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const pad = n => String(n).padStart(2, '0');
+const digits = n => n >= 1000 ? 'd4' : n >= 100 ? 'd3' : '';   // длинное число — поменьше, чтобы влезло в плашку
 const DRAW = Date.parse('2026-12-30T00:00:00+03:00');   // розыгрыш 30 декабря, Москва
 
 // ---------- данные: свежая таблица → копия на телефоне → демо (только пока таблица не подключена) ----------
@@ -76,14 +77,12 @@ function renderPanel(shown = me.coupons) {
     const done = shown >= me.coupons;
     const pct = done ? (COUPON_RUB - me.toNext) / COUPON_RUB * 100 : 100;
     $('panel').innerHTML = sw +
-      `<div class="big"><span class="n">${shown}</span><div><div class="w">${plural(shown, 'купон', 'купона', 'купонов')}</div>${delta > 0 ? `<span class="pill">+${delta} с прошлого визита</span>` : ''}</div></div>
+      `<div class="big"><span class="n ${digits(shown)}">${shown}</span><div><div class="w">${plural(shown, 'купон', 'купона', 'купонов')}</div>${delta > 0 ? `<span class="pill">+${delta} с прошлого визита</span>` : ''}</div></div>
        <div class="track"><i style="width:${pct}%"></i></div>
        <div class="small">${done ? `до ${me.coupons + 1}-го купона — ${fmt(me.toNext)} ₽` : `${shown + 1}-й купон уже летит!`}</div>` + days;
   } else {
-    const place = ranked().findIndex(p => p.id === me.id) + 1;
     $('panel').innerHTML = sw +
-      `<div class="big"><span class="n">${fmt(total)}</span><div><div class="w">${plural(total, 'купон', 'купона', 'купонов')}</div><span class="pill green">твои — ${me.coupons}</span></div></div>
-       <div class="small" style="margin-top:12px">${me.coupons > 0 ? `ты на ${place}-м месте из ${people.length}` : 'твой первый купон — впереди'}</div>
+      `<div class="big"><span class="n ${digits(total)}">${fmt(total)}</span><div><div class="w">${plural(total, 'купон', 'купона', 'купонов')}</div><span class="pill green">твои — ${me.coupons}</span></div></div>
        <button class="cta" data-open="rating">посмотреть рейтинг</button>` + days;
   }
 }
