@@ -18,7 +18,9 @@ const MAX_MINE_BODIES = 100;
 const GREENS = [['#1f6b4f', '#16523c'], ['#2aa56f', '#1f8a5a'], ['#18573f', '#124632']]; // оттенки билетов как в концепте
 
 export async function createDrum(canvas, { onTouch = () => {} } = {}) {
-  await RAPIER.init();
+  // знак «D» из логотипа — для белых (чужих) купонов
+  const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  const [, markImg] = await Promise.all([RAPIER.init(), loadImg('assets/logo-mark.png')]);
 
   // ---------- рендер ----------
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -112,7 +114,16 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     g.strokeStyle = ink; g.globalAlpha = .35; g.lineWidth = 4; g.setLineDash([10, 10]);
     g.beginPath(); g.moveTo(410, 18); g.lineTo(410, 214); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
     g.fillStyle = ink; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = '600 104px Montserrat, sans-serif'; g.fillText(num, 210, name ? 100 : 118, 330);
+    if (num === 'D' && markImg) {
+      // перекрашиваем белый знак в цвет печати купона
+      const mc = document.createElement('canvas'); mc.width = markImg.width; mc.height = markImg.height;
+      const mg = mc.getContext('2d'); mg.drawImage(markImg, 0, 0);
+      mg.globalCompositeOperation = 'source-in'; mg.fillStyle = ink; mg.fillRect(0, 0, mc.width, mc.height);
+      const h = 180, w = h * mc.width / mc.height;
+      g.drawImage(mc, 210 - w / 2, 116 - h / 2, w, h);
+    } else {
+      g.font = '600 104px Montserrat, sans-serif'; g.fillText(num, 210, name ? 100 : 118, 330);
+    }
     if (name) { g.globalAlpha = .8; g.font = '600 26px Montserrat, sans-serif'; g.fillText(name, 210, 180, 330); g.globalAlpha = 1; }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso;
     return t;
@@ -178,7 +189,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     mode = 'all'; myName = name; clear();
     const nOthers = Math.max(0, Math.min(others, cap - mine));
     const mineTex = ticketTexture({ a: '#2bb073', b: '#1c8d59', ink: '#ffffff', num: '★' }); textures.push(mineTex);
-    const othTex = ticketTexture({ a: '#ffffff', b: '#eef2f0', ink: '#1f6b4f', num: '№' }); textures.push(othTex);
+    const othTex = ticketTexture({ a: '#ffffff', b: '#eef2f0', ink: '#1f6b4f', num: 'D' }); textures.push(othTex);
     const mineGeo = new THREE.BoxGeometry(SIZE_ALL.x * 1.5, SIZE_ALL.y * 1.5, SIZE_ALL.z);
     const glow = new THREE.MeshStandardMaterial({ map: mineTex, emissive: 0x1fd07f, emissiveIntensity: .3, roughness: .45 });
     const mineM = new THREE.InstancedMesh(mineGeo, mats(edgeMat, glow), Math.max(mine, 1));
