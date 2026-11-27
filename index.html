@@ -4,112 +4,76 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#1a56cf">
-<title>Мой лототрон</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lobster&family=Rubik:wght@700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#5e0b16">
+<title>Конкурс-лотерея Дятьково Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=202611271346">
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-}}
-</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head>
 <body>
-<canvas id="snow" aria-hidden="true"></canvas>
-<div class="drift" aria-hidden="true"></div>
-<svg class="garland" id="garland" aria-hidden="true"></svg>
-<canvas id="c" aria-label="Лототрон с купонами. Потяни вверх или вниз, чтобы прокрутить."></canvas>
+<span class="badge" id="badge" hidden></span>
 
-<header class="top" id="top">
-  <span class="eyebrow" id="badge">Конкурс-лотерея · купоны до 28 декабря</span>
-  <h1 id="hello">Лототрон</h1>
-  <nav class="tabs" id="tabs" hidden>
-    <button data-tab="me" class="on">Мой</button>
-    <button data-tab="all">Общий</button>
-    <button data-tab="prizes">Призы</button>
-  </nav>
-</header>
-
-<!-- мой лототрон -->
-<section class="card" id="card-me" hidden>
-  <div class="count">
-    <span class="num" id="cnt">0</span>
-    <div class="count-side">
-      <div class="lbl" id="cntLbl">купонов</div>
-      <span class="delta" id="delta" hidden></span>
+<div class="scroller" id="scroller">
+  <!-- экран 1: обложка -->
+  <section class="cover" id="cover">
+    <picture>
+      <!-- телефон: вертикальный кадр; компьютер: широкий. Размеры с запасом под Retina, чтобы фото было чётким -->
+      <source media="(max-aspect-ratio: 4/5)" srcset="assets/photo-mobile-1500.jpg 960w, assets/photo-mobile-2600.jpg 1670w" sizes="66vh">
+      <img class="photo" src="assets/photo-2400.jpg" srcset="assets/photo-1600.jpg 1600w, assets/photo-2400.jpg 2400w, assets/photo-3600.jpg 3600w" sizes="100vw" alt="">
+    </picture>
+    <img class="logo" src="assets/logo.png" alt="Дятьково Design">
+    <div class="cover-ui">
+      <div class="countdown plate" id="countdown">
+        <div class="t">КОНКУРС-ЛОТЕРЕЯ</div>
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="units"><span>дней</span><span>часов</span><span>минут</span></div>
+        <div class="till">розыгрыш 30 декабря</div>
+      </div>
+      <button class="hint" id="hint">Листай вниз — твой лототрон
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
     </div>
-  </div>
-  <div class="bar"><i id="fill"></i></div>
-  <div class="row"><span id="tonext"></span><span class="chance" id="chance"></span></div>
-  <div class="ach" id="ach"></div>
-  <button class="link" id="notMe">Это не я</button>
-</section>
+  </section>
 
-<!-- общий лототрон -->
-<section class="card" id="card-all" hidden>
-  <div class="count">
-    <span class="num small" id="cntAll">0</span>
-    <div class="count-side">
-      <div class="lbl">купонов в лототроне</div>
-      <span class="delta gold" id="mineAll"></span>
+  <!-- экран 2: лототрон -->
+  <section class="game" id="game">
+    <svg class="flake a" viewBox="-100 -100 200 200" aria-hidden="true"><use href="#flake"/></svg>
+    <svg class="flake b" viewBox="-100 -100 200 200" aria-hidden="true"><use href="#flake"/></svg>
+    <canvas id="drum" aria-label="Лототрон с купонами. Потяни вверх или вниз, чтобы прокрутить."></canvas>
+    <div class="side" id="side">
+      <p class="hello" id="hello">Найди себя</p>
+
+      <div class="panel plate" id="panel" hidden></div>
+
+      <div class="panel plate picker" id="picker" hidden>
+        <h2>Найди себя</h2>
+        <p>Начни вводить фамилию — покажем совпадения.</p>
+        <input id="q" type="search" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Фамилия" aria-label="Фамилия">
+        <ul class="found" id="found"></ul>
+        <p class="note" id="pickNote">Нужно хотя бы 3 буквы.</p>
+      </div>
+
+      <nav class="nav"><button data-open="prizes">Призы</button><button data-open="mech">Механика</button></nav>
+      <button class="notme" id="notMe" hidden>Это не я</button>
     </div>
-  </div>
-  <button class="rate-btn" id="openRating"><span id="myPlace"></span><span aria-hidden="true">Рейтинг ↑</span></button>
-</section>
+  </section>
+</div>
 
-<!-- рейтинг -->
-<section class="sheet" id="rating" hidden aria-label="Рейтинг участников">
-  <div class="sheet-head">
-    <h2>Рейтинг</h2>
-    <button class="close" id="closeRating" aria-label="Закрыть рейтинг">×</button>
-  </div>
-  <div class="chips" id="chips"></div>
-  <ol class="list" id="list"></ol>
-  <p class="note" id="zeroNote"></p>
-</section>
-
-<!-- призы -->
-<section class="prizes" id="prizes" hidden>
-  <div class="countdown">
-    <div class="cd"><b id="cdCoupons">—</b><span id="cdCouponsLbl">дней на купоны</span><small>до 28 декабря</small></div>
-    <div class="cd"><b id="cdDraw">—</b><span id="cdDrawLbl">дней до розыгрыша</span><small>30 декабря, Москва, трансляция</small></div>
-  </div>
-  <h2>Что разыгрываем</h2>
-  <ol class="stages">
-    <li><span class="st">1 этап</span><b>15 призов</b><p>Мультивыпечка KBS 0501 03</p></li>
-    <li><span class="st">2 этап</span><b>10 призов</b><p>Погружной блендер KHB 0317 W Tulip</p></li>
-    <li><span class="st">3 этап</span><b>5 призов</b><p>Чайник SMEG KLF03WHEU, белый</p></li>
-    <li><span class="st">4 этап</span><b>3 приза</b><p>Сертификат на мебель Дятьково Design со скидкой 90%*</p></li>
-    <li><span class="st">5 этап</span><b>1 приз</b><p>Сертификат на мебель Дятьково Design со скидкой 100%*</p></li>
-    <li class="top-prize"><span class="st">6 этап</span><b>1 приз</b><p>Диван или кресло Дятьково Design на выбор: диваны TALLA, TOKKA, LANZ, SOLIN; кресла TALLA, OMISH, TRIM, TYROL, GLENO, BENGAL, KESSEL</p></li>
-    <li><span class="st">Бонус</span><b>15 призов</b><p>Дополнительные бонусные призы в конце розыгрыша</p></li>
-  </ol>
-  <h2>Как это работает</h2>
-  <ul class="rules">
-    <li>За каждые 200 000 ₽ принятых денежных средств (ПДС), включая рассрочку, — один именной купон. Считаем по данным DMI-портала с 19 ноября по 28 декабря.</li>
-    <li>30 декабря все купоны опускают в лототрон. Каждый купон тянут один раз и не возвращают.</li>
-    <li>Пока в лототроне есть хоть один купон с твоим именем — ты в игре, даже если уже что-то выиграл.</li>
-    <li>Призы выдаются после 13 января 2027.</li>
-  </ul>
-  <p class="note">* Стоимость заказа — не больше 100 000 ₽ с учётом базовой скидки в Портале на 30 декабря 2026.</p>
-</section>
-
-<!-- выбор себя -->
-<section class="picker" id="picker" hidden>
-  <div class="picker-box">
-    <h2>Найди себя</h2>
-    <p>Начни вводить фамилию — покажем совпадения.</p>
-    <input id="q" type="search" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Фамилия" aria-label="Фамилия">
-    <ul class="found" id="found"></ul>
-    <p class="note" id="pickNote">Нужно хотя бы 3 буквы.</p>
-  </div>
-</section>
+<!-- снежинка: шесть лучей с веточками, тонкая линия -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="arm" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+      <path d="M0 0 V-92"/><path d="M0 -34 L-20 -54 M0 -34 L20 -54"/><path d="M0 -60 L-15 -75 M0 -60 L15 -75"/>
+    </g>
+    <g id="flake">
+      <use href="#arm"/><use href="#arm" transform="rotate(60)"/><use href="#arm" transform="rotate(120)"/>
+      <use href="#arm" transform="rotate(180)"/><use href="#arm" transform="rotate(240)"/><use href="#arm" transform="rotate(300)"/>
+    </g>
+  </defs>
+</svg>
 
 <div class="loading" id="loading">Загружаем купоны…</div>
-
 <script type="module" src="js/app.js?v=202611271346"></script>
 </body>
 </html>

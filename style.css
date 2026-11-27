@@ -1,141 +1,171 @@
-/* Лототрон — ёлочная тема (прототип v4) */
+/* Лототрон — по концепту Ксении (Дятьково Design). Montserrat, фирменный зелёный, оранжевые акценты. */
 :root{
-  --ink:#1b2a4a; --muted:#56688a; --red:#ef2b3c; --green:#14a352; --yellow:#ffcd1f; --blue:#1d5fd6;
-  --sky:#1a56cf; --card:#fff; --soft:#eaf1fb;
-  --f-display: Lobster, "Comic Sans MS", cursive;
-  --f-num: Rubik, "Arial Black", system-ui, sans-serif;
-  --f-body: Nunito, system-ui, -apple-system, sans-serif;
-  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
-  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --green:#0d5a40; --green-hi:#16694c; --green-lo:#0a4a34; --green-deep:#083d2b; --green-bright:#1fa76b;
+  --orange-hi:#ffc57c; --orange:#f4a84d; --ink:#10382a; --muted:#5e756b; --line:#e6ece9;
+  --white:#fff; --curtain:#5e0b16;
+  --f: Montserrat, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gl: max(16px, env(safe-area-inset-left, 0px)); --gr: max(16px, env(safe-area-inset-right, 0px));
   color-scheme: light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{margin:0;height:100%;overflow:hidden}
-html{background:var(--sky)}
-body{
-  background:
-    radial-gradient(42% 30% at 50% 52%, rgba(255,236,150,.6), transparent 72%),
-    linear-gradient(180deg, #1a56cf 0%, #2f86f5 38%, #7cc4ff 68%, #d6efff 100%);
-  font-family:var(--f-body);color:#fff;-webkit-font-smoothing:antialiased;
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:var(--f);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+
+/* два экрана со «щелчком»: обложка ↔ лототрон */
+.scroller{position:fixed;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:none;scrollbar-width:none}
+.scroller::-webkit-scrollbar{display:none}
+.scroller > section{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+
+.badge{position:fixed;z-index:20;top:calc(12px + env(safe-area-inset-top,0px));right:var(--gr);font-weight:600;font-size:11px;
+  padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.88);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.badge.demo{background:var(--orange);color:var(--ink)}
+
+/* ---------- экран 1: обложка ---------- */
+.cover{background:var(--curtain)}
+.cover picture, .cover img.photo{position:absolute;inset:0;width:100%;height:100%}
+.cover img.photo{object-fit:cover;object-position:50% 40%}
+.logo{position:absolute;z-index:2;top:calc(22px + env(safe-area-inset-top,0px));left:var(--gl);width:150px;height:auto}
+.cover-ui{position:absolute;z-index:2;left:var(--gl);right:var(--gr);bottom:max(14px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:10px}
+.hint{border:0;background:none;color:#fff;font-weight:600;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 12px;text-shadow:0 1px 8px rgba(0,0,0,.55)}
+.hint svg{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* плашка-счётчик как в концепте */
+.countdown{width:100%;max-width:420px;text-align:center;color:#fff;border-radius:22px;padding:24px 22px 22px;container-type:inline-size}
+.countdown .t{color:var(--orange-hi);font-weight:600;font-size:18px;letter-spacing:.02em}
+.countdown .clock{font-weight:500;font-size:clamp(40px,19cqi,124px);white-space:nowrap;line-height:1;margin:10px 0 6px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.countdown .units{display:grid;grid-template-columns:repeat(3,1fr);font-size:14px;font-weight:500;max-width:300px;margin:0 auto}
+.countdown .till{color:var(--orange-hi);font-weight:500;font-size:18px;margin-top:14px}
+
+/* общий «объём» зелёных плашек: светлее сверху-слева, тонкий светлый кант, мягкая тень */
+/* как в концепте: почти плоский тёмно-зелёный, тонкий светлый кант по краю, мягкая тень снизу */
+.plate{background:linear-gradient(180deg,#0d5c41,#0a5239);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 1.5px 0 rgba(255,255,255,.14),0 12px 28px rgba(6,40,27,.24),0 3px 8px rgba(6,40,27,.14)}
+
+@media (min-width:900px){
+  .cover img.photo{object-position:40% 30%}
+  .logo{top:calc(40px + env(safe-area-inset-top,0px));left:4.5vw;width:220px}
+  .cover-ui{left:auto;right:6.5vw;top:50%;bottom:auto;transform:translateY(-54%);width:520px}
+  .countdown{max-width:none;padding:42px 44px 38px;border-radius:26px}
+  .countdown .t{font-size:28px}
+  .countdown .clock{margin:16px 0 8px}
+  .countdown .units{font-size:21px;max-width:400px}
+  .countdown .till{font-size:26px;margin-top:20px}
+  .hint{margin-top:18px;font-size:15px}
 }
-button{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 
-#snow,#c{position:fixed;inset:0;width:100%;height:100%}
-#c{touch-action:none;cursor:grab}
-#c:active{cursor:grabbing}
-.drift{position:fixed;left:0;right:0;bottom:0;height:30vh;pointer-events:none;
-  background:
-    radial-gradient(55% 70% at 12% 100%, #fff 98%, transparent 100%),
-    radial-gradient(50% 60% at 85% 100%, #f2f9ff 98%, transparent 100%),
-    radial-gradient(70% 45% at 50% 100%, #fff 98%, transparent 100%)}
-.garland{position:fixed;top:env(safe-area-inset-top,0px);left:0;width:100%;height:52px;pointer-events:none;z-index:2}
-.garland .b{animation:blink 1.6s ease-in-out infinite}
-.garland .b:nth-child(odd){animation-delay:.8s}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+/* ---------- экран 2: лототрон на белом со снежинкой ---------- */
+.game{background:#fff}
+.flake{position:absolute;z-index:0;pointer-events:none;color:#0d5a40;opacity:.045}
+.flake.a{width:150vh;height:150vh;left:-48vh;top:-22vh}
+.flake.b{width:70vh;height:70vh;right:-22vh;bottom:-24vh;opacity:.03}
+.game #drum{position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:grab}
+.game #drum:active{cursor:grabbing}
+.side{position:absolute;z-index:2;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));bottom:max(10px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
+/* на планшете и в узком окне плашка не шире телефонной — остальное место отдаём лототрону */
+.hello{margin:0;font-weight:700;font-size:18px;letter-spacing:.01em;text-transform:uppercase;color:var(--green)}
 
-/* шапка */
-.top{position:fixed;top:0;left:0;right:0;z-index:3;padding:calc(46px + env(safe-area-inset-top,0px)) var(--gutter-r) 0 var(--gutter-l);
-  display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-.eyebrow{font-weight:800;font-size:12px;background:rgba(255,255,255,.2);padding:5px 12px;border-radius:99px;text-align:center}
-.eyebrow.demo{background:var(--yellow);color:#7a3b00}
-.eyebrow.stale{background:#fff;color:var(--red)}
-h1{font-family:var(--f-display);font-weight:400;font-size:clamp(32px,7vw,46px);margin:0;line-height:1.05;text-align:center;
-  text-shadow:0 3px 0 rgba(10,40,120,.35);text-wrap:balance}
-h1 b{color:var(--yellow);font-weight:400}
-.tabs{pointer-events:auto;display:flex;background:rgba(255,255,255,.22);border-radius:99px;padding:4px;gap:4px}
-.tabs button{font-weight:800;font-size:14px;color:#fff;background:none;border:0;padding:9px 16px;border-radius:99px;cursor:pointer;white-space:nowrap}
-.tabs button.on{background:#fff;color:var(--red);box-shadow:0 3px 0 rgba(10,40,120,.2)}
+/* плашка с купонами */
+.panel{color:#fff;border-radius:22px;padding:18px 20px 16px;container-type:inline-size}
+.switch{display:inline-flex;gap:2px;padding:4px;border-radius:99px;background:#08452f;
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
+.switch button{border:0;background:none;color:#fff;font-weight:500;font-size:14px;padding:6px 14px;border-radius:99px}
+.switch button.on{color:#123a2b;background:linear-gradient(180deg,#f8b965,#f2a447);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
+/* у вкладок «мой» и «общий» одинаковая высота строк — плашка и лототрон не прыгают при переключении */
+.big{display:flex;align-items:center;gap:16px;margin-top:16px;height:23cqi}
+.mid{height:78px;display:flex;flex-direction:column;justify-content:center}
+.big .n{font-weight:500;font-size:24cqi;line-height:.86;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.big .w{font-weight:500;font-size:9.5cqi;line-height:1.05}
+.big .n.d3{font-size:22cqi}
+.big .n.d4{font-size:15.5cqi}
+.big .n.d3 + div .w{font-size:9cqi}
+.big .n.d4 + div .w{font-size:8.2cqi}
+.big > div{display:flex;flex-direction:column;align-items:stretch}
+/* таблетка — на всю ширину слова «купонов», как в концепте */
+.pill{display:block;text-align:center;margin-top:6px;font-weight:500;font-size:15px;padding:4px 12px;border-radius:99px;color:#123a2b;
+  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.16)}
+.pill.green{color:#fff;background:linear-gradient(180deg,#19ad68,#119858);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(0,0,0,.16)}
+.track{margin:0 0 10px;height:26px;padding:3px;border-radius:99px;background:#08452f;
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 2px 3px rgba(0,0,0,.28)}
+.track i{display:block;height:100%;min-width:20px;border-radius:99px;background:linear-gradient(180deg,#1db06b,#139a5b);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22);transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
+.small{font-size:14px;font-weight:500}
+.days{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;font-weight:500}
+.days b{font-weight:600;font-size:18px;color:var(--orange-hi);font-variant-numeric:tabular-nums}
+.cta{display:block;width:100%;margin:0;border:0;border-radius:99px;padding:11px;font-weight:500;font-size:18px;color:#123a2b;
+  background:linear-gradient(180deg,#f8b965,#f2a447);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 
-/* карточки внизу */
-.card{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:3;
-  width:min(440px,calc(100% - 32px));background:var(--card);color:var(--ink);border-radius:28px;padding:16px 20px 14px;
-  box-shadow:0 8px 0 rgba(10,50,130,.15),0 24px 50px rgba(10,50,130,.25)}
-.count{display:flex;align-items:center;gap:14px}
-.count-side{min-width:0}
-.num{font-family:var(--f-num);font-weight:900;font-size:68px;line-height:.9;color:var(--red);display:inline-block;font-variant-numeric:tabular-nums}
-.num.small{font-size:50px}
-.num.bump{animation:bump .55s cubic-bezier(.2,1.8,.4,1)}
-@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.3) rotate(-5deg)}100%{transform:scale(1)}}
-.lbl{font-family:var(--f-num);font-weight:800;font-size:20px}
-.delta{display:inline-block;margin-top:5px;font-weight:900;font-size:13px;background:var(--green);color:#fff;padding:3px 10px;border-radius:99px}
-.delta.gold{background:var(--yellow);color:#7a3b00}
-.bar{margin:14px 0 8px;height:18px;border-radius:99px;background:var(--soft);overflow:hidden;position:relative;box-shadow:inset 0 2px 0 rgba(0,0,0,.06)}
-.bar i{position:absolute;inset:0 auto 0 0;border-radius:99px;width:0;
-  background:repeating-linear-gradient(-45deg,var(--red) 0 10px,#fff 10px 20px);background-size:28px 28px;
-  box-shadow:inset 0 0 0 2px var(--red);animation:stripes 1.2s linear infinite;transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
-@keyframes stripes{to{background-position:28px 0}}
-.row{display:flex;justify-content:space-between;gap:4px 10px;font-weight:800;font-size:14px;flex-wrap:wrap;color:var(--muted)}
-.row b{font-weight:900;color:var(--ink)}
-.chance{color:var(--green);font-weight:900}
-.ach{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.ach span{font-size:12px;font-weight:900;padding:4px 9px;border-radius:99px;background:var(--soft);color:#9aa8c2}
-.ach span.got{background:var(--yellow);color:#7a3b00}
-.link{display:block;margin:8px auto 0;background:none;border:0;color:var(--muted);font-weight:700;font-size:12px;text-decoration:underline;cursor:pointer}
-.rate-btn{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;border:0;cursor:pointer;
-  background:var(--soft);color:var(--ink);font-weight:900;font-size:15px;padding:12px 14px;border-radius:16px}
-.rate-btn span:last-child{color:var(--red)}
+.nav{display:flex;gap:10px}
+.nav button{flex:1;border:0;border-radius:16px;padding:11px 8px;font-weight:600;font-size:15px;color:var(--green);
+  background:linear-gradient(180deg,#fff,#f2f6f4);box-shadow:inset 0 1px 0 #fff,0 0 0 1px var(--line),0 6px 16px rgba(6,40,27,.1)}
+.notme{align-self:center;border:0;background:none;color:var(--muted);font-weight:500;font-size:12px;text-decoration:underline;padding:2px}
 
-/* рейтинг — выезжающая панель */
-.sheet{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:6;width:min(480px,100%);max-height:78vh;display:flex;flex-direction:column;
-  background:var(--card);color:var(--ink);border-radius:28px 28px 0 0;box-shadow:0 -20px 60px rgba(10,50,130,.35);
-  padding:16px var(--gutter-r) max(16px,env(safe-area-inset-bottom,0px)) var(--gutter-l);animation:up .3s cubic-bezier(.2,.9,.2,1)}
-@keyframes up{from{transform:translate(-50%,40px);opacity:0}}
-.sheet-head{display:flex;justify-content:space-between;align-items:center}
-.sheet h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;color:var(--red)}
-.close{border:0;background:var(--soft);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.chips button{border:0;background:var(--soft);color:var(--muted);font-weight:800;font-size:13px;padding:6px 12px;border-radius:99px;cursor:pointer}
-.chips button.on{background:var(--ink);color:#fff}
-.list{list-style:none;margin:0;padding:0;overflow-y:auto;overscroll-behavior:contain;min-height:0}
-.list li{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid var(--soft)}
-.list .pl{font-family:var(--f-num);font-weight:900;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
-.list .nm{min-width:0}
-.list .nm b{display:block;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list .nm small{color:var(--muted);font-weight:700;font-size:12px}
-.list .cp{font-family:var(--f-num);font-weight:900;font-size:20px;color:var(--red);font-variant-numeric:tabular-nums}
-.list li.me{background:#fff6d1;border-radius:12px}
-.list li:nth-child(-n+3) .pl{color:#c58a00}
-.note{color:var(--muted);font-size:12px;font-weight:700;margin:10px 0 0}
+/* выбор себя — в той же зелёной плашке */
+.picker h2{margin:0;font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.01em}
+.picker p{margin:6px 0 12px;font-size:14px;font-weight:500;opacity:.9}
+.picker input{width:100%;border:0;border-radius:14px;padding:13px 16px;font-weight:600;font-size:17px;color:var(--ink);background:#fff;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.15)}
+.picker input:focus{outline:3px solid var(--orange-hi)}
+.found{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto}
+.found button{width:100%;text-align:left;border:0;border-radius:12px;padding:10px 14px;color:#fff;background:rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.found button:hover{background:rgba(255,255,255,.18)}
+.found b{display:block;font-weight:600;font-size:16px}
+.found small{font-size:12px;opacity:.8}
+.picker .note{margin:10px 0 0;font-size:12px;opacity:.8}
 
-/* призы */
-.prizes{position:fixed;inset:180px 0 0 0;z-index:2;overflow-y:auto;padding:8px var(--gutter-r) max(24px,env(safe-area-inset-bottom,0px)) var(--gutter-l);
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14px);mask-image:linear-gradient(180deg,transparent 0,#000 14px)}
-.prizes > *{max-width:520px;margin-left:auto;margin-right:auto}
-.prizes h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:24px auto 10px;text-shadow:0 2px 0 rgba(10,40,120,.3)}
-.countdown{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cd{background:#fff;color:var(--ink);border-radius:22px;padding:14px;display:flex;flex-direction:column;box-shadow:0 6px 0 rgba(10,50,130,.15)}
-.cd b{font-family:var(--f-num);font-weight:900;font-size:44px;color:var(--red);line-height:1;font-variant-numeric:tabular-nums}
-.cd span{font-weight:900}
-.cd small{color:var(--muted);font-weight:700;font-size:12px;margin-top:2px}
-.stages{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
-.stages li{background:#fff;color:var(--ink);border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:baseline}
-.stages .st{font-weight:900;font-size:12px;color:#fff;background:var(--blue);padding:3px 9px;border-radius:99px;grid-row:span 2;align-self:center}
-.stages b{font-family:var(--f-num);font-weight:900;color:var(--red)}
-.stages p{margin:0;font-weight:700;font-size:14px;grid-column:2}
-.stages .top-prize{background:var(--yellow)}
-.stages .top-prize .st{background:var(--red)}
-.rules{background:#fff;color:var(--ink);border-radius:18px;padding:14px 14px 14px 32px;font-weight:700;font-size:14px;line-height:1.45;display:flex;flex-direction:column;gap:8px}
-.prizes .note{color:#fff;opacity:.85}
-
-/* выбор себя */
-.picker{position:fixed;inset:0;z-index:7;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;
-  padding:calc(170px + env(safe-area-inset-top,0px)) var(--gutter-r) 24px var(--gutter-l)}
-.picker-box{width:min(440px,100%);background:#fff;color:var(--ink);border-radius:28px;padding:20px;box-shadow:0 8px 0 rgba(10,50,130,.15),0 24px 50px rgba(10,50,130,.25)}
-.picker h2{font-family:var(--f-display);font-weight:400;font-size:32px;margin:0;color:var(--red)}
-.picker p{margin:4px 0 12px;font-weight:700;color:var(--muted)}
-.picker input{width:100%;font:800 18px var(--f-body);padding:14px 16px;border-radius:16px;border:2px solid var(--soft);background:var(--soft);color:var(--ink)}
-.picker input:focus{outline:none;border-color:var(--blue);background:#fff}
-.found{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
-.found button{width:100%;text-align:left;border:0;background:var(--soft);color:var(--ink);padding:12px 14px;border-radius:14px;cursor:pointer}
-.found button b{display:block;font-weight:900}
-.found button small{font-weight:700;color:var(--muted)}
-.found button:hover{background:#dde8f8}
-
-.loading{position:fixed;left:50%;top:55%;transform:translate(-50%,-50%);font-weight:900;font-size:16px;z-index:4;text-shadow:0 2px 0 rgba(10,40,120,.3)}
-
-@media (prefers-reduced-motion: reduce){
-  .bar i,.garland .b{animation:none}
-  .num.bump,.sheet{animation:none}
+@media (min-width:900px){
+  .game #drum{left:auto;right:0;width:60vw}
+  .side{left:6vw;right:auto;top:50%;bottom:auto;transform:translateY(-50%);width:480px;gap:16px}
+  .hello{font-size:28px}
+  .panel{padding:34px 38px 30px;border-radius:26px}
+  .big{margin-top:22px}
+  .mid{height:92px}
+  .days{margin-top:16px;padding-top:16px}
+  .pill{font-size:21px;padding:5px 16px}
+  .cta{font-size:24px;padding:13px}
+  .switch button{font-size:20px;padding:7px 20px}
+  .track{height:30px}
+  .small{font-size:16px}
 }
+
+/* ---------- всплывающие окна ---------- */
+.modal{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,28,19,.5);animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{width:min(760px,100%);max-height:88vh;overflow-y:auto;overscroll-behavior:contain;background:#fff;border-radius:26px 26px 0 0;
+  padding:22px var(--gr) max(20px,env(safe-area-inset-bottom,0px)) var(--gl);animation:up .28s cubic-bezier(.2,.9,.2,1)}
+@media (min-width:760px){ .modal{align-items:center} .sheet{border-radius:26px;padding:30px 32px} }
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.sheet h2{margin:0;font-weight:700;font-size:28px;letter-spacing:.02em;text-transform:uppercase;color:var(--green)}
+.x{border:0;width:40px;height:40px;border-radius:50%;font-size:22px;line-height:1;color:var(--green);background:#eef4f1}
+.prizes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:600px){ .prizes{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.prize{background:#fff;border-radius:18px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 0 0 1px var(--line),0 8px 20px rgba(6,40,27,.08)}
+.prize b{font-weight:600;font-size:16px;color:var(--green)}
+.prize img{width:100%;aspect-ratio:390/250;object-fit:contain}
+.prize small{font-size:12px;font-weight:500;color:var(--muted)}
+.bonus{margin:16px 0 6px;font-weight:600;color:var(--green)}
+.foot{font-size:12px;color:var(--muted);margin:0}
+.mech{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+.mech li{display:grid;grid-template-columns:46px 1fr;gap:8px;font-size:17px;line-height:1.45;font-weight:500}
+.mech li b{color:var(--green);font-weight:500;font-size:24px}
+.rate{list-style:none;margin:0;padding:0}
+.rate li{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:10px 6px;border-bottom:1px solid var(--line)}
+.rate .pl{font-weight:600;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.rate li:nth-child(-n+3) .pl{color:#c38a2a}
+.rate .nm{min-width:0}
+.rate .nm b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rate .nm small{font-size:12px;color:var(--muted);font-weight:500}
+.rate .cp{font-weight:600;font-size:20px;color:var(--green);font-variant-numeric:tabular-nums}
+.rate li.me{background:#eaf5ef;border-radius:12px}
+.rate-note{font-size:12px;color:var(--muted);margin:12px 0 0}
+
+.loading{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:var(--curtain);color:#fff;font-weight:600;font-size:16px;text-align:center;padding:24px}
+
+@media (prefers-reduced-motion: reduce){ .hint svg,.modal,.sheet{animation:none} .track i{transition:none} }
