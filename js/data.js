@@ -40,7 +40,7 @@ export function makeId(fio, city) {
 
 const norm = s => String(s ?? '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
 
-const COLS = { fio: ['фио'], city: ['город', 'салон'], salon: ['салон'], brand: ['направ'], pds: ['пдс'] };
+const COLS = { id: ['id'], fio: ['фио'], city: ['город', 'салон'], salon: ['салон'], brand: ['направ'], pds: ['пдс'] };
 
 // «Анапа г (Краснодарский край)» → «Анапа», «Екатеринбург г.» → «Екатеринбург»
 export function cleanCity(raw) {
@@ -68,7 +68,8 @@ export function buildParticipants(rows) {
     const salon = col.salon >= 0 ? cleanSalon(r[col.salon]) : '';
     const brand = col.brand >= 0 ? String(r[col.brand] ?? '').trim() : '';
     const pds = col.pds >= 0 ? parsePds(r[col.pds]) : 0;
-    let id = makeId(fio, city);
+    // id из готового файла (tools/import-csv.mjs) — посчитан по полному ФИО, совпадает с id из Google-таблицы
+    let id = (col.id >= 0 && String(r[col.id] ?? '').trim()) || makeId(fio, city);
     for (let n = 2; used.has(id); n++) id = makeId(fio, `${city}#${n}`); // полные тёзки в одном городе
     used.add(id);
     const [last = '', first = ''] = fio.split(' ');
@@ -89,7 +90,9 @@ export function searchByLastName(list, query) {
   if (q.length < 3) return [];
   return list.filter(p => {
     const w = norm(p.fio).split(' ');
-    return w[0].startsWith(q) && rest.every((r, i) => (w[i + 1] ?? '').startsWith(r));
+    // в файле сайта отчество может быть инициалом «с.» — тогда вставленное «сергеевна» тоже подходит
+    const fits = (word = '', r) => word.startsWith(r) || (word.endsWith('.') && r.startsWith(word.slice(0, -1)));
+    return w[0].startsWith(q) && rest.every((r, i) => fits(w[i + 1], r));
   });
 }
 
