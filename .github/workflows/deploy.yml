@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: '17 3,15 * * *'
   workflow_dispatch:
+    inputs:
+      today:
+        description: 'Поставить сегодняшнюю дату «Обновлено», даже если данные не менялись'
+        type: boolean
+        default: false
 permissions:
   contents: read
   pages: write
@@ -28,6 +33,7 @@ jobs:
       - name: Данные из таблицы
         env:
           SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+          FORCE_TODAY: ${{ inputs.today }}
         run: node .github/update-data.mjs
       - name: Сборка
         run: mkdir -p ../out && rsync -a --exclude .git --exclude .github ./ ../out/ && mv ../out ./_site

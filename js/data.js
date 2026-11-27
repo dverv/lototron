@@ -113,16 +113,16 @@ export function pickerName(p) {
 
 // Файл для сайта из полной таблицы: отчество только инициалом («Морозова Юлия С.»), id — по полному ФИО,
 // поэтому id совпадают с теми, что получились бы из самой таблицы. Используется при выкладке (tools/, .github/).
-export function toSiteCsv(text) {
+export function toSiteCsv(text, updated) {
   const rows = parseCSV(String(text).replace(/^﻿/, ''));
   const ps = buildParticipants(rows);
   const q = v => /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
   const short = fio => { const [l, f = '', ...rest] = fio.split(' '); return [l, f, ...rest.map(w => w[0] + '.')].filter(Boolean).join(' '); };
   const csv = [
-    ['Обновлено', readUpdated(rows) ?? ''],
+    ['Обновлено', updated ?? readUpdated(rows) ?? ''],
     [],
     ['id', 'ФИО', 'Город', 'Салон', 'ПДС'],
     ...ps.map(p => [p.id, short(p.fio), p.city, p.salon, Math.round(p.pds)]),
   ].map(r => r.map(q).join(',')).join('\n') + '\n';
-  return { csv, people: ps.length, coupons: ps.reduce((a, p) => a + p.coupons, 0), updated: readUpdated(rows) };
+  return { csv, people: ps.length, coupons: ps.reduce((a, p) => a + p.coupons, 0), updated: updated ?? readUpdated(rows) };
 }
