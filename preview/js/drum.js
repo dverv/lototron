@@ -1,17 +1,17 @@
-// 3D-лототрон по концепту Ксении: прозрачный цилиндр, хромированные кольца и перекладины,
-// хромовая ось на стойках, алюминиевый поддон. Купоны — зелёные билеты с вырезами и номерами.
+// 3D-лототрон: форма — шестигранный барабан с ручкой, люком и стойками (как в утверждённых прототипах),
+// фактура — по концепту Ксении: хром, прозрачный акрил, алюминиевый поддон, зелёные билеты с номерами.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import RAPIER from 'https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.12.0/+esm';
 
-const R = 2.2;                         // радиус цилиндра
-const L = 4.8;                         // длина цилиндра
+const RH = 2.4;                        // радиус описанной окружности шестигранника
+const AP = RH * Math.cos(Math.PI / 6); // апофема
+const L = 4.8;                         // длина барабана
 const T = 0.3;                         // толщина стенок-коллайдеров
-const NSEG = 20;                       // стенка из 20 плиток
-const BASE_Y = -(R + .55);             // верх поддона
+const H = RH + 0.75;                   // от оси до поддона
 const X = new THREE.Vector3(1, 0, 0);
-const SEG = Math.PI / 2;               // 4 перекладины: в покое одна сверху, одна спереди — как в концепте
+const SEG = Math.PI / 3;
 const SIZE_ME = new THREE.Vector3(1.1, .5, .03);
 const SIZE_ALL = new THREE.Vector3(.5, .23, .022);
 const MAX_MINE_BODIES = 100;
@@ -27,54 +27,76 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
   renderer.toneMappingExposure = 1.05;
   const scene = new THREE.Scene();
   scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.03).texture;
-  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
   scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe6e2, .9));
   const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(3, 9, 7); scene.add(sun);
 
   const chrome = new THREE.MeshStandardMaterial({ color: 0xd8dde2, metalness: 1, roughness: .16 });
   const alu = new THREE.MeshStandardMaterial({ color: 0xd2d6da, metalness: .85, roughness: .38 });
-  const acrylic = new THREE.MeshPhysicalMaterial({ color: 0xf2f8ff, transparent: true, opacity: .06, roughness: .03,
+  const acrylic = new THREE.MeshPhysicalMaterial({ color: 0xf2f8ff, transparent: true, opacity: .035, roughness: .03,
     metalness: 0, clearcoat: 1, clearcoatRoughness: .02, envMapIntensity: 1.1, depthWrite: false, side: THREE.DoubleSide });
+  const gripMat = new THREE.MeshPhysicalMaterial({ color: 0x0d5a40, roughness: .3, clearcoat: 1, clearcoatRoughness: .1 });
 
-  // барабан (вращается)
+  // барабан (вращается): акриловые грани, хромированные рёбра, торцы со спицами, люк, ручка
   const drum = new THREE.Group(); scene.add(drum);
-  const tube = new THREE.Mesh(new THREE.CylinderGeometry(R, R, L, 96, 1, true), acrylic);
-  tube.rotation.z = Math.PI / 2; tube.renderOrder = 2; drum.add(tube);
+  for (let k = 0; k < 6; k++) {
+    const phi = k * SEG;
+    const p = new THREE.Mesh(new THREE.BoxGeometry(L, .03, RH), acrylic);
+    p.quaternion.setFromAxisAngle(X, phi); p.position.set(0, Math.cos(phi) * AP, Math.sin(phi) * AP);
+    p.renderOrder = 2; drum.add(p);
+    const va = phi + Math.PI / 6;
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, L, 16), chrome);
+    bar.rotation.z = Math.PI / 2; bar.position.set(0, Math.cos(va) * RH, Math.sin(va) * RH); drum.add(bar);
+  }
   for (const s of [-1, 1]) {
-    const disc = new THREE.Mesh(new THREE.CylinderGeometry(R, R, .03, 96), acrylic);
-    disc.rotation.z = Math.PI / 2; disc.position.x = s * L / 2; disc.renderOrder = 2; drum.add(disc);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(R + .03, .085, 20, 128), chrome);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(RH, RH, .03, 6), acrylic);
+    cap.rotation.z = Math.PI / 2; cap.position.x = s * L / 2; cap.renderOrder = 2; drum.add(cap);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RH, .08, 16, 6), chrome);
     ring.rotation.y = Math.PI / 2; ring.position.x = s * L / 2; drum.add(ring);
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(R * .42, .05, 14, 64), chrome); // внутреннее кольцо на торце
-    ring2.rotation.y = Math.PI / 2; ring2.position.x = s * (L / 2 + .02); drum.add(ring2);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.28, .28, .12, 40), chrome);
-    hub.rotation.z = Math.PI / 2; hub.position.x = s * (L / 2 + .06); drum.add(hub);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.3, .3, .14, 40), chrome);
+    hub.rotation.z = Math.PI / 2; hub.position.x = s * (L / 2 + .07); drum.add(hub);
+    for (let k = 0; k < 3; k++) {
+      const sp = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, RH * 2, 10), chrome);
+      sp.position.x = s * (L / 2 + .02); sp.rotation.x = Math.PI / 6 + k * SEG; drum.add(sp);
+    }
   }
-  for (let k = 0; k < 4; k++) {                         // перекладины вдоль цилиндра
-    const a = k * SEG;
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, L, 16), chrome);
-    bar.rotation.z = Math.PI / 2; bar.position.set(0, Math.cos(a) * (R + .03), Math.sin(a) * (R + .03)); drum.add(bar);
-  }
+  const hatch = new THREE.Group();
+  [[1.4, .07, 0, .55], [1.4, .07, 0, -.55], [.07, 1.17, .7, 0], [.07, 1.17, -.7, 0]].forEach(([w, d, x, z]) => {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, .07, d), chrome); b.position.set(x, 0, z); hatch.add(b);
+  });
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(.1, 20, 14), chrome); knob.position.set(0, .08, 0); hatch.add(knob);
+  hatch.position.y = AP + .04; drum.add(hatch);
+  const crank = new THREE.Group();
+  const arm = new THREE.Mesh(new RoundedBoxGeometry(.12, 1.15, .16, 3, .04), chrome); arm.position.y = .5; crank.add(arm);
+  const grip = new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .62, 24), gripMat);
+  grip.rotation.z = Math.PI / 2; grip.position.set(.32, 1.0, 0); crank.add(grip);
+  const gripCap = new THREE.Mesh(new THREE.SphereGeometry(.12, 20, 14), chrome); gripCap.position.set(.64, 1.0, 0); crank.add(gripCap);
+  crank.position.x = L / 2 + .75; drum.add(crank);
 
-  // неподвижное: ось, стойки, поддон, мягкая тень
+  // неподвижное: ось, стойки буквой «А», поддон, мягкая тень
   const stand = new THREE.Group(); scene.add(stand);
-  const axle = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, L + 1.3, 20), chrome); axle.rotation.z = Math.PI / 2; stand.add(axle);
+  const rod = (a, b, r) => {
+    const d = new THREE.Vector3().subVectors(b, a);
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, d.length(), 20), chrome);
+    m.position.copy(a).add(b).multiplyScalar(.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); stand.add(m);
+  };
   for (const s of [-1, 1]) {
-    const x = s * (L / 2 + .42);
-    const knob = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, .22, 32), chrome); knob.rotation.z = Math.PI / 2; knob.position.x = s * (L / 2 + .66); stand.add(knob);
-    const cap = new THREE.Mesh(new THREE.SphereGeometry(.12, 20, 14), chrome); cap.position.x = s * (L / 2 + .8); stand.add(cap);
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, -BASE_Y, 20), chrome); post.position.set(x, BASE_Y / 2, 0); stand.add(post);
-    const foot = new THREE.Mesh(new THREE.CylinderGeometry(.22, .26, .1, 32), chrome); foot.position.set(x, BASE_Y + .05, 0); stand.add(foot);
+    const x = s * (L / 2 + .45), top = new THREE.Vector3(x, 0, 0);
+    rod(top, new THREE.Vector3(x, -H, 1.3), .075);
+    rod(top, new THREE.Vector3(x, -H, -1.3), .075);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(.17, 24, 16), chrome); cap.position.copy(top); stand.add(cap);
   }
-  const base = new THREE.Mesh(new RoundedBoxGeometry(L + 1.5, .26, 2.4, 4, .07), alu); base.position.y = BASE_Y - .13; stand.add(base);
-  const lip = new THREE.Mesh(new RoundedBoxGeometry(L + 1.3, .05, 2.2, 2, .02), new THREE.MeshStandardMaterial({ color: 0xe9ecef, metalness: .7, roughness: .3 }));
-  lip.position.y = BASE_Y + .02; stand.add(lip);
+  rod(new THREE.Vector3(-L / 2 - .6, 0, 0), new THREE.Vector3(L / 2 + .8, 0, 0), .065);
+  const base = new THREE.Mesh(new RoundedBoxGeometry(L + 1.6, .26, 3.2, 4, .07), alu); base.position.y = -H - .13; stand.add(base);
+  const lip = new THREE.Mesh(new RoundedBoxGeometry(L + 1.4, .05, 3.0, 2, .02), new THREE.MeshStandardMaterial({ color: 0xe9ecef, metalness: .7, roughness: .3 }));
+  lip.position.y = -H + .02; stand.add(lip);
   {
     const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
     const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(20,40,32,.4)'); gr.addColorStop(1, 'rgba(20,40,32,0)');
     g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
-    const blob = new THREE.Mesh(new THREE.PlaneGeometry(L + 4, 4.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
-    blob.rotation.x = -Math.PI / 2; blob.position.y = BASE_Y - .27; stand.add(blob);
+    const blob = new THREE.Mesh(new THREE.PlaneGeometry(L + 4, 5.4), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
+    blob.rotation.x = -Math.PI / 2; blob.position.y = -H - .27; stand.add(blob);
   }
 
   // ---------- билеты ----------
@@ -102,25 +124,24 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
 
   // ---------- физика ----------
   let world, drumBody, coupons = [], meshes = [], textures = [], mode = 'me', ghostMat = null, myName = '';
-  let angle = 0, w = 4.5, snapTarget = null;
+  let angle = 0, w = 4.5, snapTarget = null, hatchOpen = 0, hatchT = 0;
   const drumQ = new THREE.Quaternion();
   const STEP = () => mode === 'me' ? 1 / 120 : 1 / 60;
 
   function buildShell() {
-    const rr = R + T / 2, hw = Math.PI * rr / NSEG * 1.25;
-    for (let k = 0; k < NSEG; k++) {
-      const phi = k / NSEG * Math.PI * 2;
-      world.createCollider(RAPIER.ColliderDesc.cuboid(L / 2 + .2, T / 2, hw)
-        .setTranslation(0, Math.cos(phi) * rr, Math.sin(phi) * rr)
+    for (let k = 0; k < 6; k++) {
+      const phi = k * SEG, r = AP + T / 2;
+      world.createCollider(RAPIER.ColliderDesc.cuboid(L / 2 + .2, T / 2, RH / 2 + .15)
+        .setTranslation(0, Math.cos(phi) * r, Math.sin(phi) * r)
         .setRotation(new THREE.Quaternion().setFromAxisAngle(X, phi)).setFriction(.6).setRestitution(.2), drumBody);
     }
     for (const s of [-1, 1])
-      world.createCollider(RAPIER.ColliderDesc.cuboid(T / 2, R + .4, R + .4).setTranslation(s * (L / 2 + T / 2), 0, 0).setFriction(.4).setRestitution(.2), drumBody);
+      world.createCollider(RAPIER.ColliderDesc.cuboid(T / 2, RH + .3, RH + .3).setTranslation(s * (L / 2 + T / 2), 0, 0).setFriction(.4).setRestitution(.2), drumBody);
   }
-  function randInside(margin, yMax = R) {
+  function randInside(margin, yMax = AP) {
     for (;;) {
-      const y = (Math.random() * 2 - 1) * (R - margin), z = (Math.random() * 2 - 1) * (R - margin);
-      if (Math.hypot(y, z) < R - margin && y < yMax) return new THREE.Vector3((Math.random() * 2 - 1) * (L / 2 - margin - .3), y, z);
+      const y = (Math.random() * 2 - 1) * (AP - margin), z = (Math.random() * 2 - 1) * (AP - margin);
+      if (Math.hypot(y, z) < AP - margin && y < yMax) return new THREE.Vector3((Math.random() * 2 - 1) * (L / 2 - margin - .3), y, z);
     }
   }
   const rq = () => new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.random() * 7, Math.random() * 7, Math.random() * 7));
@@ -173,32 +194,34 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     w = Math.max(w, 4);
   }
 
-  // новые купоны падают сверху по одному, потом барабан перемешивает
+  // новые купоны падают через люк по одному, потом барабан перемешивает
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   let dropping = false;
   async function dropNew(n, onEach = () => {}) {
     if (mode !== 'me' || n <= 0 || dropping) return;
     dropping = true;
-    snapTarget = Math.round(angle / (2 * Math.PI)) * 2 * Math.PI; w = 0;
-    await sleep(700);
+    snapTarget = Math.round(angle / (2 * Math.PI)) * 2 * Math.PI; w = 0;   // люком вверх
+    await sleep(1000);
+    hatchOpen = 1;
     const shown = Math.min(n, 12);
     for (let k = 0; k < shown; k++) {
       if (myCount < MAX_MINE_BODIES) {
-        const p = new THREE.Vector3((Math.random() - .5) * 2, R - .6, (Math.random() - .5) * .6);
+        const p = new THREE.Vector3((Math.random() - .5) * .5, AP - .55, (Math.random() - .5) * .4);
         coupons.push({ body: addBody(p, SIZE_ME, { x: 0, y: -2, z: 0 }), mesh: myMesh(myCount) });
       }
       myCount++; onEach(k, shown);
       await sleep(shown > 6 ? 380 : 600);
     }
     myCount += n - shown;
-    await sleep(400);
+    hatchOpen = 0;
+    await sleep(500);
     snapTarget = null; w = 5;
     dropping = false;
   }
 
   // ---------- управление ----------
   // тянешь вверх-вниз — крутишь барабан; влево-вправо — слегка поворачиваешь вид
-  const REST_YAW = .07;
+  const REST_YAW = .34;   // три четверти — видно ручку и объём
   let drag = null, yaw = REST_YAW, yawTarget = REST_YAW;
   canvas.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; try { canvas.setPointerCapture(e.pointerId); } catch {} onTouch(); });
   canvas.addEventListener('pointermove', e => {
@@ -219,7 +242,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     if (snapTarget !== null) w += ((snapTarget - angle) * 30 - w * 9) * h;
     else {
       w *= Math.exp(-h * .55);
-      if (Math.abs(w) < .9 && !drag) { const tgt = Math.round(angle / SEG) * SEG; w += ((tgt - angle) * 10 - w * 3) * h; } // в покое перекладины сверху и спереди
+      if (Math.abs(w) < .9 && !drag) { const tgt = Math.round(angle / SEG) * SEG; w += ((tgt - angle) * 14 - w * 3.2) * h; } // встаёт гранью вниз
     }
     angle += w * h;
     drumQ.setFromAxisAngle(X, angle);
@@ -231,24 +254,26 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     const dirty = new Set(), check = ++frame % 15 === 0;
     for (const c of coupons) {
       const t = c.body.translation(), r = c.body.rotation();
-      if (check && (Math.abs(t.x) > L / 2 + .05 || Math.hypot(t.y, t.z) > R + .05)) { c.body.setTranslation({ x: 0, y: 0, z: 0 }, true); c.body.setLinvel({ x: 0, y: 0, z: 0 }, true); }
+      if (check && (Math.abs(t.x) > L / 2 + .05 || Math.hypot(t.y, t.z) > RH + .05)) { c.body.setTranslation({ x: 0, y: 0, z: 0 }, true); c.body.setLinvel({ x: 0, y: 0, z: 0 }, true); }
       if (c.mesh) { c.mesh.position.set(t.x, t.y, t.z); c.mesh.quaternion.set(r.x, r.y, r.z, r.w); }
       else { m4.compose(v3.set(t.x, t.y, t.z), q4.set(r.x, r.y, r.z, r.w), one); c.inst.setMatrixAt(c.idx, m4); dirty.add(c.inst); }
     }
     dirty.forEach(m => m.instanceMatrix.needsUpdate = true);
     drum.quaternion.copy(drumQ);
+    hatchT += (hatchOpen - hatchT) * .15;
+    hatch.position.y = AP + .04 + hatchT * .25; hatch.rotation.x = -hatchT * .9;
   }
 
   // камера вписывает лототрон в полосу экрана между topPx и bottomPx (координаты холста)
   let camDist = 16, layout = { topPx: 0, bottomPx: innerHeight };
-  const lookY = (R + BASE_Y - .3) / 2;
+  const lookY = (RH - H - .2) / 2;
   function resize() {
     const wdt = canvas.clientWidth || innerWidth, hgt = canvas.clientHeight || innerHeight, a = wdt / hgt;
     renderer.setSize(wdt, hgt, false); camera.aspect = a;
     const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const { topPx, bottomPx } = layout;
     const frac = Math.max(.25, (bottomPx - topPx) / hgt);
-    const objH = (R - BASE_Y + .5) * 1.12, objW = L + 1.9;
+    const objH = (2 * RH + .95) * 1.12, objW = L + 2.6;
     camDist = Math.max(objH / (2 * tanH * frac), objW / (2 * tanH * a * .96)) * 1.08;
     camera.clearViewOffset();
     camera.setViewOffset(wdt, hgt, 0, hgt / 2 - (topPx + bottomPx) / 2, wdt, hgt);
@@ -270,7 +295,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     sync();
     yaw += (yawTarget - yaw) * .08;
     if (!drag) yawTarget += (REST_YAW - yawTarget) * .01;
-    camera.position.set(Math.sin(yaw) * camDist, lookY + camDist * .16, Math.cos(yaw) * camDist);
+    camera.position.set(Math.sin(yaw) * camDist, lookY + camDist * .24, Math.cos(yaw) * camDist);
     camera.lookAt(0, lookY, 0);
     if (ghostMat) ghostMat.opacity = .72 + .18 * Math.sin(now / 450);
     renderer.render(scene, camera);

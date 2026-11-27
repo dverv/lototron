@@ -34,9 +34,9 @@ button{cursor:pointer}
 @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
 /* плашка-счётчик как в концепте */
-.countdown{width:100%;max-width:420px;text-align:center;color:#fff;border-radius:22px;padding:22px 20px 20px}
+.countdown{width:100%;max-width:420px;text-align:center;color:#fff;border-radius:22px;padding:24px 22px 22px;container-type:inline-size}
 .countdown .t{color:var(--orange-hi);font-weight:600;font-size:18px;letter-spacing:.02em}
-.countdown .clock{font-weight:500;font-size:62px;line-height:1;margin:10px 0 6px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.countdown .clock{font-weight:500;font-size:clamp(40px,19cqi,124px);white-space:nowrap;line-height:1;margin:10px 0 6px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .countdown .units{display:grid;grid-template-columns:repeat(3,1fr);font-size:14px;font-weight:500;max-width:300px;margin:0 auto}
 .countdown .till{color:var(--orange-hi);font-weight:500;font-size:18px;margin-top:14px}
 
@@ -48,9 +48,9 @@ button{cursor:pointer}
   .cover img.photo{object-position:40% 30%}
   .logo{top:calc(40px + env(safe-area-inset-top,0px));left:4.5vw;width:220px}
   .cover-ui{left:auto;right:6.5vw;top:50%;bottom:auto;transform:translateY(-54%);width:520px}
-  .countdown{max-width:none;padding:40px 36px 34px;border-radius:26px}
+  .countdown{max-width:none;padding:42px 44px 38px;border-radius:26px}
   .countdown .t{font-size:28px}
-  .countdown .clock{font-size:108px;margin:16px 0 8px}
+  .countdown .clock{margin:16px 0 8px}
   .countdown .units{font-size:21px;max-width:400px}
   .countdown .till{font-size:26px;margin-top:20px}
   .hint{margin-top:18px;font-size:15px}
@@ -67,26 +67,26 @@ button{cursor:pointer}
 .hello{margin:0;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;color:var(--green)}
 
 /* плашка с купонами */
-.panel{color:#fff;border-radius:22px;padding:16px 18px 16px}
+.panel{color:#fff;border-radius:22px;padding:22px 22px 20px}
 .switch{display:inline-flex;gap:2px;padding:4px;border-radius:99px;background:var(--green-deep);
   box-shadow:inset 0 2px 4px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.12)}
 .switch button{border:0;background:none;color:#fff;font-weight:500;font-size:15px;padding:6px 15px;border-radius:99px}
 .switch button.on{color:var(--ink);background:linear-gradient(180deg,var(--orange-hi),var(--orange));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(150,80,10,.25),0 2px 6px rgba(0,0,0,.25)}
-.big{display:flex;align-items:center;gap:14px;margin-top:12px}
+.big{display:flex;align-items:center;gap:16px;margin-top:20px}
 .big .n{font-weight:400;font-size:76px;line-height:.86;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .big .w{font-weight:500;font-size:30px;line-height:1.05}
 .pill{display:inline-block;margin-top:6px;font-weight:500;font-size:15px;padding:4px 13px;border-radius:99px;color:var(--ink);
   background:linear-gradient(180deg,var(--orange-hi),var(--orange));box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 2px 5px rgba(0,0,0,.2)}
 .pill.green{color:#fff;background:linear-gradient(180deg,#2bbf7d,var(--green-bright));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 5px rgba(0,0,0,.2)}
-.track{margin:14px 0 8px;height:26px;padding:3px;border-radius:99px;background:var(--green-deep);
+.track{margin:20px 0 10px;height:26px;padding:3px;border-radius:99px;background:var(--green-deep);
   box-shadow:inset 0 2px 4px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.1)}
 .track i{display:block;height:100%;min-width:20px;border-radius:99px;background:linear-gradient(180deg,#2fc584,#14965d);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(0,0,0,.25);transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
 .small{font-size:14px;font-weight:500}
-.days{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;font-weight:500}
+.days{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);font-size:14px;font-weight:500}
 .days b{font-weight:600;font-size:18px;color:var(--orange-hi);font-variant-numeric:tabular-nums}
-.cta{display:block;width:100%;margin-top:14px;border:0;border-radius:99px;padding:11px;font-weight:600;font-size:16px;color:var(--ink);
+.cta{display:block;width:100%;margin-top:18px;border:0;border-radius:99px;padding:11px;font-weight:600;font-size:16px;color:var(--ink);
   background:linear-gradient(180deg,var(--orange-hi),var(--orange));box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 3px 8px rgba(0,0,0,.22)}
 
 .nav{display:flex;gap:10px}
@@ -110,9 +110,9 @@ button{cursor:pointer}
 
 @media (min-width:900px){
   .game #drum{left:auto;right:0;width:60vw}
-  .side{left:6vw;right:auto;top:50%;bottom:auto;transform:translateY(-50%);width:440px;gap:14px}
+  .side{left:6vw;right:auto;top:50%;bottom:auto;transform:translateY(-50%);width:480px;gap:16px}
   .hello{font-size:28px}
-  .panel{padding:22px 26px 20px;border-radius:24px}
+  .panel{padding:34px 38px 30px;border-radius:26px}
   .big .n{font-size:104px}
   .big .w{font-size:42px}
   .pill{font-size:19px;padding:5px 16px}

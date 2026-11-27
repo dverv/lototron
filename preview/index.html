@@ -8,7 +8,6 @@
 <title>Конкурс-лотерея Дятьково Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/photo-mobile.jpg" media="(max-width: 899px)">
 <link rel="stylesheet" href="style.css?v=202611271219">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 </head>
@@ -19,9 +18,9 @@
   <!-- экран 1: обложка -->
   <section class="cover" id="cover">
     <picture>
-      <source media="(max-width: 899px)" srcset="assets/photo-mobile.jpg">
-      <source media="(min-width: 1600px)" srcset="assets/photo-2400.jpg">
-      <img class="photo" src="assets/photo-1400.jpg" alt="">
+      <!-- телефон: вертикальный кадр; компьютер: широкий. Размеры с запасом под Retina, чтобы фото было чётким -->
+      <source media="(max-aspect-ratio: 4/5)" srcset="assets/photo-mobile-1500.jpg 960w, assets/photo-mobile-2600.jpg 1670w" sizes="66vh">
+      <img class="photo" src="assets/photo-2400.jpg" srcset="assets/photo-1600.jpg 1600w, assets/photo-2400.jpg 2400w, assets/photo-3600.jpg 3600w" sizes="100vw" alt="">
     </picture>
     <img class="logo" src="assets/logo.png" alt="Дятьково Design">
     <div class="cover-ui">
