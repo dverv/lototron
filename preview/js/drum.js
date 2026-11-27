@@ -119,8 +119,9 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
       const mc = document.createElement('canvas'); mc.width = markImg.width; mc.height = markImg.height;
       const mg = mc.getContext('2d'); mg.drawImage(markImg, 0, 0);
       mg.globalCompositeOperation = 'source-in'; mg.fillStyle = ink; mg.fillRect(0, 0, mc.width, mc.height);
-      const h = 180, w = h * mc.width / mc.height;
-      g.drawImage(mc, 210 - w / 2, 116 - h / 2, w, h);
+      const h = name ? 128 : 180, w = h * mc.width / mc.height, cy = name ? 92 : 116;   // с именем — знак чуть меньше и выше
+      g.drawImage(mc, 210 - w / 2, cy - h / 2, w, h);
+      if (name) { g.globalAlpha = .85; g.font = '600 26px Montserrat, sans-serif'; g.fillText(name, 210, 186, 330); g.globalAlpha = 1; }
     } else {
       g.font = '600 104px Montserrat, sans-serif'; g.fillText(num, 210, name ? 100 : 118, 330);
     }
@@ -176,7 +177,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
   }
   function myMesh(i) {
     const [a, b] = GREENS[i % 3];
-    const tex = ticketTexture({ a, b, ink: '#ffffff', num: String(i + 1), name: myName }); textures.push(tex);
+    const tex = ticketTexture({ a, b, ink: '#ffffff', num: 'D', name: myName }); textures.push(tex);
     const m = new THREE.Mesh(new THREE.BoxGeometry(SIZE_ME.x, SIZE_ME.y, SIZE_ME.z), mats(edgeMat, faceMat(tex)));
     scene.add(m); meshes.push(m); return m;
   }
@@ -188,7 +189,7 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
   function showAll({ name, mine, others, cap = 350 }) {
     mode = 'all'; myName = name; clear();
     const nOthers = Math.max(0, Math.min(others, cap - mine));
-    const mineTex = ticketTexture({ a: '#2bb073', b: '#1c8d59', ink: '#ffffff', num: '★' }); textures.push(mineTex);
+    const mineTex = ticketTexture({ a: '#2bb073', b: '#1c8d59', ink: '#ffffff', num: 'D' }); textures.push(mineTex);
     const othTex = ticketTexture({ a: '#ffffff', b: '#eef2f0', ink: '#1f6b4f', num: 'D' }); textures.push(othTex);
     const mineGeo = new THREE.BoxGeometry(SIZE_ALL.x * 1.5, SIZE_ALL.y * 1.5, SIZE_ALL.z);
     const glow = new THREE.MeshStandardMaterial({ map: mineTex, emissive: 0x1fd07f, emissiveIntensity: .3, roughness: .45 });
