@@ -45,6 +45,11 @@ button{cursor:pointer}
 .plate{background:linear-gradient(180deg,#0d5c41,#0a5239);
   box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.09),inset 0 1.5px 0 rgba(255,255,255,.14),0 12px 28px rgba(6,40,27,.24),0 3px 8px rgba(6,40,27,.14)}
 
+/* телефон: фото крупнее и выше, чтобы коробка с открыткой была над плашкой, а не под ней; сверху меньше пустой шторы */
+@media (max-width:899px) and (max-aspect-ratio:4/5){
+  .cover img.photo{top:-22%;height:122%}
+}
+
 @media (min-width:900px){
   /* фото чуть крупнее экрана и сдвинуто влево-вверх: голова девушки на уровне плашки или чуть выше */
   .cover img.photo{left:-12%;width:112%;object-position:50% 62%}
