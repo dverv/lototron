@@ -111,8 +111,11 @@ button{cursor:pointer}
   background:#ffb25b;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.18)}
 
 .nav{display:flex;gap:10px}
-.nav button{flex:1;border:0;border-radius:16px;padding:11px 8px;font-weight:600;font-size:15px;color:var(--green);
-  background:linear-gradient(180deg,#fff,#f2f6f4);box-shadow:inset 0 1px 0 #fff,0 0 0 1px var(--line),0 6px 16px rgba(6,40,27,.1)}
+/* фирменный жёлтый: на белом фоне кнопки сразу видно */
+.nav button{flex:1;border:0;border-radius:16px;padding:12px 8px;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer;
+  background:var(--orange);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px rgba(180,110,30,.22);transition:transform .15s,box-shadow .15s}
+.nav button:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 9px 20px rgba(180,110,30,.3)}
+.nav button:active{transform:translateY(1px)}
 .notme{align-self:center;border:0;background:none;color:var(--muted);font-weight:500;font-size:12px;text-decoration:underline;padding:2px}
 
 /* выбор себя — в той же зелёной плашке */
