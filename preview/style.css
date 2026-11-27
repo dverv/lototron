@@ -64,7 +64,8 @@ button{cursor:pointer}
 .flake.b{width:70vh;height:70vh;right:-22vh;bottom:-24vh;opacity:.03}
 .game #drum{position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:grab}
 .game #drum:active{cursor:grabbing}
-.side{position:absolute;z-index:2;left:var(--gl);right:var(--gr);bottom:max(14px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+.side{position:absolute;z-index:2;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));bottom:max(14px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px}
+/* на планшете и в узком окне плашка не шире телефонной — остальное место отдаём лототрону */
 .hello{margin:0;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;color:var(--green)}
 
 /* плашка с купонами */
