@@ -1,0 +1,36 @@
+# Выкладка сайта на GitHub Pages со свежими данными из Google-таблицы:
+# при каждой выкладке из tools/publish.sh и каждый час по расписанию.
+name: Выкладка с данными
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Данные из таблицы
+        env:
+          SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+        run: node .github/update-data.mjs
+      - name: Сборка
+        run: mkdir -p ../out && rsync -a --exclude .git --exclude .github ./ ../out/ && mv ../out ./_site
+      - uses: actions/upload-pages-artifact@v3
+      - id: deployment
+        uses: actions/deploy-pages@v4
