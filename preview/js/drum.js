@@ -285,8 +285,8 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const { topPx, bottomPx } = layout;
     const frac = Math.max(.25, (bottomPx - topPx) / hgt);
-    const objH = (2 * RH + .95) * 1.12, objW = L + 2.6;
-    camDist = Math.max(objH / (2 * tanH * frac), objW / (2 * tanH * a * .96)) * 1.08;
+    const objH = (2 * RH + .95) * 1.04, objW = L + 3.1;   // ширина с ручкой и стойками + запас
+    camDist = Math.max(objH / (2 * tanH * frac), objW / (2 * tanH * a)) * (a < 1 ? 1 : 1.12);   // на телефоне — без лишних полей
     camera.clearViewOffset();
     camera.setViewOffset(wdt, hgt, 0, hgt / 2 - (topPx + bottomPx) / 2, wdt, hgt);
     camera.updateProjectionMatrix();
@@ -307,8 +307,9 @@ export async function createDrum(canvas, { onTouch = () => {} } = {}) {
     sync();
     yaw += (yawTarget - yaw) * .08;
     if (!drag) yawTarget += (REST_YAW - yawTarget) * .01;
-    camera.position.set(Math.sin(yaw) * camDist, lookY + camDist * .24, Math.cos(yaw) * camDist);
-    camera.lookAt(0, lookY, 0);
+    const cx = .3;   // ручка торчит справа — центрируем кадр по барабану вместе с ручкой
+    camera.position.set(cx + Math.sin(yaw) * camDist, lookY + camDist * .24, Math.cos(yaw) * camDist);
+    camera.lookAt(cx, lookY, 0);
     if (ghostMat) ghostMat.opacity = .72 + .18 * Math.sin(now / 450);
     renderer.render(scene, camera);
   }

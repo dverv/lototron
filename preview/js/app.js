@@ -78,12 +78,12 @@ function renderPanel(shown = me.coupons) {
     const pct = done ? (COUPON_RUB - me.toNext) / COUPON_RUB * 100 : 100;
     $('panel').innerHTML = sw +
       `<div class="big"><span class="n ${digits(shown)}">${shown}</span><div><div class="w">${plural(shown, 'купон', 'купона', 'купонов')}</div>${delta > 0 ? `<span class="pill">+${delta} с прошлого визита</span>` : ''}</div></div>
-       <div class="track"><i style="width:${pct}%"></i></div>
-       <div class="small">${done ? `до ${me.coupons + 1}-го купона — ${fmt(me.toNext)} ₽` : `${shown + 1}-й купон уже летит!`}</div>` + days;
+       <div class="mid"><div class="track"><i style="width:${pct}%"></i></div>
+       <div class="small">${done ? `до ${me.coupons + 1}-го купона — ${fmt(me.toNext)} ₽` : `${shown + 1}-й купон уже летит!`}</div></div>` + days;
   } else {
     $('panel').innerHTML = sw +
       `<div class="big"><span class="n ${digits(total)}">${fmt(total)}</span><div><div class="w">${plural(total, 'купон', 'купона', 'купонов')}</div><span class="pill green">твои — ${me.coupons}</span></div></div>
-       <button class="cta" data-open="rating">посмотреть рейтинг</button>` + days;
+       <div class="mid"><button class="cta" data-open="rating">посмотреть рейтинг</button></div>` + days;
   }
 }
 $('panel').addEventListener('click', e => {
