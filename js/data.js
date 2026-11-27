@@ -83,9 +83,14 @@ export function shortName(p) {
 }
 
 export function searchByLastName(list, query) {
-  const q = norm(query);
+  // Первое слово — фамилия (по одному имени список людей не перебрать). Если вставили ФИО целиком,
+  // остальные слова уточняют имя и отчество — так однофамильцы не мешают.
+  const [q = '', ...rest] = norm(query).replace(/[^a-zа-я\s-]/g, ' ').trim().split(' ');
   if (q.length < 3) return [];
-  return list.filter(p => norm(p.last).startsWith(q));   // только фамилия — по имени список людей не перебрать
+  return list.filter(p => {
+    const w = norm(p.fio).split(' ');
+    return w[0].startsWith(q) && rest.every((r, i) => (w[i + 1] ?? '').startsWith(r));
+  });
 }
 
 // Ячейка «Обновлено» рядом с подписью (обычно над шапкой таблицы).
