@@ -3,24 +3,31 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-// «Надутая» пятиконечная звезда: от центра к краю профиль как у подушки.
-function puffyStar(R = 1, r = .48, h = .4, rings = 12, per = 8) {
+// Звезда как фольгированный шарик из концепта: скруглённые толстые лучи, «надутый» объём.
+// Контур задан плавной функцией радиуса от угла: лучи без острых кончиков, впадины мягкие.
+function puffyStar(R = 1, rIn = .56, h = .62, rings = 28, N = 200) {
   const outline = [];
-  for (let i = 0; i < 10; i++) {
-    const a0 = Math.PI / 2 + i * Math.PI / 5, a1 = Math.PI / 2 + (i + 1) * Math.PI / 5;
-    const r0 = i % 2 ? r : R, r1 = (i + 1) % 2 ? r : R;
-    for (let j = 0; j < per; j++) {
-      const t = j / per;
-      outline.push([(1 - t) * Math.cos(a0) * r0 + t * Math.cos(a1) * r1, (1 - t) * Math.sin(a0) * r0 + t * Math.sin(a1) * r1]);
-    }
+  for (let i = 0; i < N; i++) {
+    const a = Math.PI / 2 + i / N * Math.PI * 2;
+    const k = Math.pow((1 + Math.cos(5 * (a - Math.PI / 2))) / 2, 1.35);   // 1 — на луче, 0 — во впадине
+    const r = rIn + (R - rIn) * k;
+    outline.push([Math.cos(a) * r, Math.sin(a) * r]);
   }
   const n = outline.length, pos = [], idx = [];
   for (const side of [1, -1]) {
     const base = pos.length / 3;
     pos.push(0, 0, side * h);
     for (let k = 1; k <= rings; k++) {
-      const t = k / rings, z = side * h * Math.pow(1 - t * t, .55);
-      for (const [x, y] of outline) pos.push(x * t, y * t, z);
+      const t = Math.sin(k / rings * Math.PI / 2);   // кольца гуще у края, где толщина быстро уходит в ноль
+      for (const [x, y] of outline) {
+        // как у надутого шарика: толщина зависит от расстояния до ближайшего края контура
+        const px = x * t, py = y * t;
+        let d = Infinity;
+        for (let j = 0; j < n; j++) d = Math.min(d, Math.hypot(px - outline[j][0], py - outline[j][1]));
+        if (k === rings) d = 0;   // самый край — шов шарика
+        const dn = Math.min(1, d / rIn);
+        pos.push(px, py, side * h * Math.sqrt(dn * (2 - dn)));
+      }
     }
     for (let i = 0; i < n; i++) {
       const a = base + 1 + i, b = base + 1 + (i + 1) % n;
