@@ -122,7 +122,7 @@ function openPicker() {
 }
 $('q').addEventListener('input', () => {
   const q = $('q').value, found = searchByLastName(people, q).slice(0, 8);
-  $('found').innerHTML = found.map(p => `<li><button data-id="${p.id}"><b>${esc(pickerName(p))}</b><small>${esc(p.city || '')}</small></button></li>`).join('');
+  $('found').innerHTML = found.map(p => `<li><button data-id="${p.id}"><b>${esc(pickerName(p))}</b><small>${esc([p.town, p.salon].filter(Boolean).join(' · '))}</small></button></li>`).join('');
   $('pickNote').textContent = q.trim().length < 3 ? 'Нужно хотя бы 3 буквы.' : found.length ? 'Нажми на себя.' : 'Не нашли. Проверь написание или напиши организатору конкурса.';
 });
 $('found').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { initAudio(); choose(people.find(p => p.id === b.dataset.id), true); } });
@@ -162,7 +162,7 @@ function sheetBody(kind) {
   const list = ranked().filter(p => p.coupons > 0 || p.id === me?.id);
   const zero = people.filter(p => p.coupons === 0 && p.id !== me?.id).length;
   return `<ol class="rate">${list.map((p, i) => { const mine = p.id === me?.id;
-    return `<li class="${mine ? 'me' : ''}"><span class="pl">${p.coupons > 0 ? i + 1 : '—'}</span><span class="nm"><b>${mine ? 'Ты' : esc(shortName(p))}</b><small>${esc(p.city || '')}</small></span><span class="cp">${p.coupons}</span></li>`; }).join('')}</ol>
+    return `<li class="${mine ? 'me' : ''}"><span class="pl">${p.coupons > 0 ? i + 1 : '—'}</span><span class="nm"><b>${mine ? 'Ты' : esc(shortName(p))}</b><small>${esc(p.town || '')}</small></span><span class="cp">${p.coupons}</span></li>`; }).join('')}</ol>
     ${zero ? `<p class="rate-note">Ещё ${zero} ${plural(zero, 'участник', 'участника', 'участников')} пока без купонов.</p>` : ''}`;
 }
 const TITLES = { prizes: 'Призы', mech: 'Механика', rating: 'Рейтинг' };

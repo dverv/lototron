@@ -40,7 +40,17 @@ export function makeId(fio, city) {
 
 const norm = s => String(s ?? '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
 
-const COLS = { fio: ['фио'], city: ['город', 'салон'], brand: ['направ'], pds: ['пдс'] };
+const COLS = { fio: ['фио'], city: ['город', 'салон'], salon: ['салон'], brand: ['направ'], pds: ['пдс'] };
+
+// «Анапа г (Краснодарский край)» → «Анапа», «Екатеринбург г.» → «Екатеринбург»
+export function cleanCity(raw) {
+  return String(raw ?? '').replace(/\([^)]*\)/g, ' ').replace(/(^|\s)г\.?(?=\s|$)/g, ' ')
+    .replace(/\s+/g, ' ').trim().replace(/^Ростов на Дону$/i, 'Ростов-на-Дону');
+}
+// «ТЦ ""Твой Дом ""Крокус""» → «ТЦ Твой Дом Крокус»: кавычки в таблице расставлены как попало
+export function cleanSalon(raw) {
+  return String(raw ?? '').replace(/["«»]/g, '').replace(/\s+/g, ' ').trim();
+}
 
 export function buildParticipants(rows) {
   const hi = rows.findIndex(r => r.some(c => norm(c).startsWith('фио')));
@@ -48,12 +58,14 @@ export function buildParticipants(rows) {
   const head = rows[hi].map(norm);
   const col = {};
   for (const [key, prefixes] of Object.entries(COLS)) col[key] = head.findIndex(h => prefixes.some(p => h.startsWith(p)));
+  if (col.salon === col.city) col.salon = -1;   // старый формат: одна колонка «Город/салон»
 
   const out = [], used = new Set();
   for (const r of rows.slice(hi + 1)) {
     const fio = String(r[col.fio] ?? '').trim().replace(/\s+/g, ' ');
     if (!fio) continue;
     const city = col.city >= 0 ? String(r[col.city] ?? '').trim() : '';
+    const salon = col.salon >= 0 ? cleanSalon(r[col.salon]) : '';
     const brand = col.brand >= 0 ? String(r[col.brand] ?? '').trim() : '';
     const pds = col.pds >= 0 ? parsePds(r[col.pds]) : 0;
     let id = makeId(fio, city);
@@ -61,7 +73,7 @@ export function buildParticipants(rows) {
     used.add(id);
     const [last = '', first = ''] = fio.split(' ');
     const coupons = Math.floor(pds / COUPON_RUB);
-    out.push({ id, fio, first, last, city, brand, pds, coupons, toNext: COUPON_RUB * (coupons + 1) - pds });
+    out.push({ id, fio, first, last, city, town: cleanCity(city), salon, brand, pds, coupons, toNext: COUPON_RUB * (coupons + 1) - pds });
   }
   return out;
 }
