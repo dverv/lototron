@@ -1,11 +1,11 @@
 # Выкладка сайта на GitHub Pages со свежими данными из Google-таблицы:
-# при каждой выкладке из tools/publish.sh и дважды в день по расписанию (6:17 и 18:17 по Москве).
+# при каждой выкладке из tools/publish.sh и раз в день по расписанию в 12:00 по Москве.
 name: Выкладка с данными
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 3,15 * * *'
+    - cron: '0 9 * * *'   # 12:00 по Москве (UTC+3)
   workflow_dispatch:
     inputs:
       today:
